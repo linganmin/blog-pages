@@ -1,0 +1,282 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Kafka 知识梳理 | 小下同学</title><meta name="author" content="安小下同学"><meta name="copyright" content="安小下同学"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Kafka 知识梳理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kafka 知识梳理">
+<meta property="og:url" content="https://blog.linganmin.cn/2021/04/18/others/kafka/index.html">
+<meta property="og:site_name" content="小下同学">
+<meta property="og:description" content="Kafka 知识梳理">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://graph.linganmin.cn/210418/1ff08ddea3bcd783bd398cfa51aef556?x-oss-process=image/format,webp/quality,q_10">
+<meta property="article:published_time" content="2021-04-17T23:30:20.000Z">
+<meta property="article:modified_time" content="2022-12-08T13:54:34.527Z">
+<meta property="article:author" content="安小下同学">
+<meta property="article:tag" content="中间件">
+<meta property="article:tag" content="MQ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://graph.linganmin.cn/210418/1ff08ddea3bcd783bd398cfa51aef556?x-oss-process=image/format,webp/quality,q_10"><link rel="shortcut icon" href="https://graph.linganmin.cn/201206/fe9c5e8ef76354659ab9c6c8764d6f3d"><link rel="canonical" href="https://blog.linganmin.cn/2021/04/18/others/kafka/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="KrvBZb2kkH"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?b4e74da1cb3c8b4a65da55116b8cba6f";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Kafka 知识梳理',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-12-08 21:54:34'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://graph.linganmin.cn/200118/06177d8b92c66f2c3a6fd82cca544f51" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">40</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">24</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://graph.linganmin.cn/210418/1ff08ddea3bcd783bd398cfa51aef556?x-oss-process=image/format,webp/quality,q_40')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小下同学</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Kafka 知识梳理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-04-17T23:30:20.000Z" title="发表于 2021-04-18 07:30:20">2021-04-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-12-08T13:54:34.527Z" title="更新于 2022-12-08 21:54:34">2022-12-08</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Middleware/">Middleware</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Kafka 知识梳理"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>kafka 是一种高吞吐量，分布式，基于发布&#x2F;订阅的消息系统。</p>
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
+<li>吞吐量高、延迟低<ul>
+<li>每个<code>topic</code>可以支持<code>consumer group(多个consumer)</code>对<code>partition</code>进行操作</li>
+</ul>
+</li>
+<li>扩展性好<ul>
+<li>集群支持热扩展</li>
+</ul>
+</li>
+<li>持久性、可靠性好<ul>
+<li>消息数据是被持久化到本地磁盘的，并且支持数据备份</li>
+</ul>
+</li>
+<li>高并发<ul>
+<li>支持千级别客户端同时读写</li>
+</ul>
+</li>
+</ul>
+<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><ul>
+<li>Broker<ul>
+<li>kafka 服务器，负责消息存储和转发</li>
+</ul>
+</li>
+<li>Topic<ul>
+<li>消息主题，用于分类消息</li>
+</ul>
+</li>
+<li>Partition<ul>
+<li><code>topic</code>的分区（sharding）,每个<code>topic</code>可以有多个<code>partition</code>，对应<code>topic</code>的消息保存在这些<code>partition</code>上，单<code>partition</code>的消息是有序的。同一个<code>topic</code>的多个<code>partition</code>不保证有序。</li>
+</ul>
+</li>
+<li>Offset<ul>
+<li>消息在<code>partition</code>上的位置，也表示消息的唯一序号。</li>
+</ul>
+</li>
+<li>Producer<ul>
+<li>消息生产者</li>
+</ul>
+</li>
+<li>Consumer Group<ul>
+<li>消息消费者<code>consumer</code>的组</li>
+</ul>
+</li>
+</ul>
+<h3 id="Controller-Broker"><a href="#Controller-Broker" class="headerlink" title="Controller Broker"></a>Controller Broker</h3><p><code>Kafka</code>使用<code>Zookeeper</code>保存了集群的<code>broker</code>、<code>topic</code>、<code>partition</code>等元数据。另外，<code>Zookeeper</code>负责从<code>broker</code>中选举一个作为<code>Controller</code>，并确保唯一性，当<code>Controller</code>宕机时，会重新选举一个新的。</p>
+<p><code>Controller Broker</code>本身就是一个普通的<code>broker</code>，只不过它需要多负载一些额外的工作</p>
+<ul>
+<li>创建、删除<code>topic</code></li>
+<li>增加<code>partition</code>，并分配<code>leader partition</code></li>
+<li>集群<code>broker</code>管理，包括：新增<code>broker</code>，<code>broker</code>主动关闭，<code>broker</code>故障</li>
+</ul>
+<h2 id="存储"><a href="#存储" class="headerlink" title="存储"></a>存储</h2><p>todo</p>
+<h2 id="提交-offset"><a href="#提交-offset" class="headerlink" title="提交 offset"></a>提交 offset</h2><blockquote>
+<p><code>consumer</code>通过提交<code>offset</code>来记录当前消费的最后位置，以便<code>consumer</code>发生崩溃或者有新的<code>consumer</code>加入<code>consumer group</code>时触发分区再均衡操作，每个<code>consumer</code>重新分配新的分区可以获取到该分区当前消费的最后位置。</p>
+</blockquote>
+<p>kafka 通过<code>enable.auto.commit</code>控制<code>offset</code>提交方式。</p>
+<ul>
+<li>enable.auto.commit<ul>
+<li>&#x3D;true<ul>
+<li>通过后台线程周期性提交，默认周期是5s，参数<code>auto.commit.interval.ms</code></li>
+</ul>
+</li>
+<li>&#x3D;false<ul>
+<li>不自动提交</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="自动提交"><a href="#自动提交" class="headerlink" title="自动提交"></a>自动提交</h3><p>大部分自动提交是定时任务，<code>pool()</code>和<code>close()</code>也会提交当前最大偏移量。</p>
+<ul>
+<li>缺点<ul>
+<li>有丢失消息风险<ul>
+<li>当<code>consumer</code>取到消息处理比较耗时，此时自动提交了<code>offset</code>，若此时<code>consumer</code>或处理程序崩溃便会导致当前消息丢失，因为在<code>broker</code>已经将此消息标识为处理完成了。因为当前<code>consumer</code>崩溃，所以其负责的<code>partition</code>被重新负载到其他<code>consumer</code>时，将从最新偏移量开始消费消息。</li>
+</ul>
+</li>
+<li>有重复消费风险<ul>
+<li>当<code>consumer</code>取到消息处理到一半，因为<code>auto.commit.interval.ms</code>配置时间过长，若此时<code>consumer</code>或处理程序崩溃，由于未提交<code>offset</code>，此消息会在负载再平衡后被其他<code>consumer</code>消费处理。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="手动提交"><a href="#手动提交" class="headerlink" title="手动提交"></a>手动提交</h3><p>为了避免消息丢失、重复消费，可以使用手动提交。</p>
+<h2 id="Consumer-数据重复场景及解决方案"><a href="#Consumer-数据重复场景及解决方案" class="headerlink" title="Consumer 数据重复场景及解决方案"></a>Consumer 数据重复场景及解决方案</h2><h3 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h3><p>数据消费完，没有及时提交 offset 到 broker，consumer 异常重启了。</p>
+<h3 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h3><p>业务<code>幂等性</code>设计</p>
+<h2 id="如何保证不丢消息"><a href="#如何保证不丢消息" class="headerlink" title="如何保证不丢消息"></a>如何保证不丢消息</h2><h3 id="Producer-丢失情况"><a href="#Producer-丢失情况" class="headerlink" title="Producer 丢失情况"></a>Producer 丢失情况</h3><h4 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h4><p>当 Producer 调用<code>send</code>方法发送消息后，消息可能会因为网络问题发送失败。</p>
+<h4 id="方案-1"><a href="#方案-1" class="headerlink" title="方案"></a>方案</h4><p>为了防止此种情况出现，我们需要关注<code>send</code>的结果，判断结果如果失败了，需要重新发送。一般重试次数会设置一个比较合理的值，比如 3，但也要根据业务场景做取舍。</p>
+<h3 id="Consumer-丢失情况"><a href="#Consumer-丢失情况" class="headerlink" title="Consumer 丢失情况"></a>Consumer 丢失情况</h3><h4 id="场景-1"><a href="#场景-1" class="headerlink" title="场景"></a>场景</h4><p>当<code>Consumer</code>拉取到消息后，<code>Consumer</code>自动提交了<code>Offset</code>。<code>Consumer</code>突然挂掉，但此时<code>Consumer</code>的业务处理逻辑尚未执行完成</p>
+<h4 id="方案-2"><a href="#方案-2" class="headerlink" title="方案"></a>方案</h4><p>cd<br>关闭自动提交<code>offset</code>，处理完逻辑手动提交。</p>
+<p>当处理完业务逻辑，<code>Consumer</code>突然挂掉，尚未手动提交<code>offset</code>，会导致消息被重复消费。需要<code>Consumer</code>的幂等性。</p>
+<h3 id="Kafka-弄丢了消息"><a href="#Kafka-弄丢了消息" class="headerlink" title="Kafka 弄丢了消息"></a>Kafka 弄丢了消息</h3><blockquote>
+<p>kafka 分区为多副本机制，分区中的多个副本会有一个<code>leader</code>副本，其他副本统称为<code>follower</code>。当我们发送消息时，其实是发送到<code>leader</code> 副本，然后 <code>follower</code> 副本从 <code>leader</code> 副本拉取信息进行同步。<code>Producer</code>和<code>Consumer</code>只与<code>leader</code>副本进行交互。</p>
+</blockquote>
+<h4 id="场景-2"><a href="#场景-2" class="headerlink" title="场景"></a>场景</h4><p>当<code>leader</code>副本所在的<code>broker</code>突然挂掉，就会从<code>follower</code>副本中选出一个新的<code>leader</code>，但是如果挂掉的那个<code>broker</code>上的副本数据没有没<code>follower</code>完全同步的话，就会造成消息丢失。</p>
+<h4 id="方案-3"><a href="#方案-3" class="headerlink" title="方案"></a>方案</h4><ul>
+<li><p>设置 acks &#x3D; all</p>
+<ul>
+<li>acks 默认值为1。表示消息被<code>leader</code>副本接收之后就算成功，acks &#x3D; all 表示所有副本都要接收到该消息之后才算成功。</li>
+</ul>
+</li>
+<li><p>设置 replication.factor &gt;&#x3D; 3</p>
+<ul>
+<li>保证每个分区的副本个数量，此做法虽然会造成数据冗余，但也带来了数据的安全性。</li>
+</ul>
+</li>
+<li><p>设置 min.insync.replicas &gt; 1</p>
+<ul>
+<li>默认值为1，设置为大于1表示消息至少被写入2个副本才算发送成功</li>
+</ul>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://blog.linganmin.cn">安小下同学</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://blog.linganmin.cn/2021/04/18/others/kafka/">https://blog.linganmin.cn/2021/04/18/others/kafka/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://blog.linganmin.cn" target="_blank">小下同学</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/">中间件</a><a class="post-meta__tags" href="/tags/MQ/">MQ</a></div><div class="post_share"><div class="social-share" data-image="https://graph.linganmin.cn/210418/1ff08ddea3bcd783bd398cfa51aef556?x-oss-process=image/format,webp/quality,q_10" data-sites="twitter,wechat,weibo"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="https://graph.linganmin.cn/200119/eed3e3ad8e1b81503989ef17fc2c5e7d?x-oss-process=image/format,webp/quality,q_60" target="_blank"><img class="post-qr-code-img" src="https://graph.linganmin.cn/200119/eed3e3ad8e1b81503989ef17fc2c5e7d?x-oss-process=image/format,webp/quality,q_60" alt="请我吃苹果"/></a><div class="post-qr-code-desc">请我吃苹果</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/04/21/others/redis/"><img class="prev-cover" src="https://graph.linganmin.cn/210501/f9d5bf728f79544fde5f1e7afe4c0d91?x-oss-process=image/format,webp/quality,q_10" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Redis 知识梳理</div></div></a></div><div class="next-post pull-right"><a href="/2021/04/07/others/feeds/"><img class="next-cover" src="https://graph.linganmin.cn/210410/1e1052bedd6dfa45b8c8626bec224ed2?x-oss-process=image/format,webp/quality,q_10" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">类微博/微信朋友圈 feed 流系统设计</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/02/19/others/consul/" title="基于 Consul 实现 gRPC 服务注册与发现"><img class="cover" src="https://graph.linganmin.cn/220219/f7972adc36f4c23da00f92f05b0b6be7?x-oss-process=image/format,webp/quality,q_10" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-02-19</div><div class="title">基于 Consul 实现 gRPC 服务注册与发现</div></div></a></div><div><a href="/2020/12/15/others/knowledge_hierarchy/" title="知识体系梳理"><img class="cover" src="https://graph.linganmin.cn/200822/43c6bc33f3be83618d4f9cc69bf00fb0?x-oss-process=image/format,webp/quality,q_10" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-15</div><div class="title">知识体系梳理</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://graph.linganmin.cn/200118/06177d8b92c66f2c3a6fd82cca544f51" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">安小下同学</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">40</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">24</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/linganmin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:saboranmin@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://www.weibo.com/u/1793963601" target="_blank" title="Weibo"><i class="fab fa-weibo"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">来日方短，道阻且长，好好吃饭，保重身体，任寅虎年快乐 ^_^</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E7%82%B9"><span class="toc-number">1.</span> <span class="toc-text">特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="toc-number">2.</span> <span class="toc-text">核心概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Controller-Broker"><span class="toc-number">2.1.</span> <span class="toc-text">Controller Broker</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%82%A8"><span class="toc-number">3.</span> <span class="toc-text">存储</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E4%BA%A4-offset"><span class="toc-number">4.</span> <span class="toc-text">提交 offset</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E6%8F%90%E4%BA%A4"><span class="toc-number">4.1.</span> <span class="toc-text">自动提交</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%8B%E5%8A%A8%E6%8F%90%E4%BA%A4"><span class="toc-number">4.2.</span> <span class="toc-text">手动提交</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Consumer-%E6%95%B0%E6%8D%AE%E9%87%8D%E5%A4%8D%E5%9C%BA%E6%99%AF%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">5.</span> <span class="toc-text">Consumer 数据重复场景及解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E5%9B%A0"><span class="toc-number">5.1.</span> <span class="toc-text">原因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%88"><span class="toc-number">5.2.</span> <span class="toc-text">方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E4%B8%8D%E4%B8%A2%E6%B6%88%E6%81%AF"><span class="toc-number">6.</span> <span class="toc-text">如何保证不丢消息</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Producer-%E4%B8%A2%E5%A4%B1%E6%83%85%E5%86%B5"><span class="toc-number">6.1.</span> <span class="toc-text">Producer 丢失情况</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF"><span class="toc-number">6.1.1.</span> <span class="toc-text">场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%A1%88-1"><span class="toc-number">6.1.2.</span> <span class="toc-text">方案</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Consumer-%E4%B8%A2%E5%A4%B1%E6%83%85%E5%86%B5"><span class="toc-number">6.2.</span> <span class="toc-text">Consumer 丢失情况</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF-1"><span class="toc-number">6.2.1.</span> <span class="toc-text">场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%A1%88-2"><span class="toc-number">6.2.2.</span> <span class="toc-text">方案</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Kafka-%E5%BC%84%E4%B8%A2%E4%BA%86%E6%B6%88%E6%81%AF"><span class="toc-number">6.3.</span> <span class="toc-text">Kafka 弄丢了消息</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF-2"><span class="toc-number">6.3.1.</span> <span class="toc-text">场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%A1%88-3"><span class="toc-number">6.3.2.</span> <span class="toc-text">方案</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/12/08/docker/log-fluentd/" title="使用 Fluentd + ElasticSearch 搭建 docker stdout 日志解决方案"><img src="https://graph.linganmin.cn/220918/09a22a20c3b33f091ac17d50dba2e259?x-oss-process=image/format,webp/quality,q_60" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="使用 Fluentd + ElasticSearch 搭建 docker stdout 日志解决方案"/></a><div class="content"><a class="title" href="/2022/12/08/docker/log-fluentd/" title="使用 Fluentd + ElasticSearch 搭建 docker stdout 日志解决方案">使用 Fluentd + ElasticSearch 搭建 docker stdout 日志解决方案</a><time datetime="2022-12-08T14:40:34.000Z" title="发表于 2022-12-08 22:40:34">2022-12-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/09/09/docker/scrolling/" title="使用 Docker Compose 实现滚动更新部署"><img src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/index.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="使用 Docker Compose 实现滚动更新部署"/></a><div class="content"><a class="title" href="/2022/09/09/docker/scrolling/" title="使用 Docker Compose 实现滚动更新部署">使用 Docker Compose 实现滚动更新部署</a><time datetime="2022-09-09T14:40:34.000Z" title="发表于 2022-09-09 22:40:34">2022-09-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/08/08/docker/log-collect/" title="使用 log-pilot + elk 搭建 docker stdout 日志解决方案"><img src="https://graph.linganmin.cn/211107/bf81612871634692c7c423dcc5aef292?x-oss-process=image/format,webp/quality,q_60" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="使用 log-pilot + elk 搭建 docker stdout 日志解决方案"/></a><div class="content"><a class="title" href="/2022/08/08/docker/log-collect/" title="使用 log-pilot + elk 搭建 docker stdout 日志解决方案">使用 log-pilot + elk 搭建 docker stdout 日志解决方案</a><time datetime="2022-08-08T14:40:34.000Z" title="发表于 2022-08-08 22:40:34">2022-08-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/05/29/k8s/k8s-sys/" title="搭建基于 Kubernetes 生产可用的日志和监控系统"><img src="https://graph.linganmin.cn/220529/b208e0a803bbec39eab9007b774f2d92?x-oss-process=image/format,webp/quality,q_10" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="搭建基于 Kubernetes 生产可用的日志和监控系统"/></a><div class="content"><a class="title" href="/2022/05/29/k8s/k8s-sys/" title="搭建基于 Kubernetes 生产可用的日志和监控系统">搭建基于 Kubernetes 生产可用的日志和监控系统</a><time datetime="2022-05-29T14:40:34.000Z" title="发表于 2022-05-29 22:40:34">2022-05-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/03/08/golang/memory-gc-escape/" title="浅析 Golang 内存机制（内存分配、GC、内存逃逸）"><img src="https://graph.linganmin.cn/220308/d4ae2041db5705ff090a064e92e12d78?x-oss-process=image/format,webp/quality,q_60" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="浅析 Golang 内存机制（内存分配、GC、内存逃逸）"/></a><div class="content"><a class="title" href="/2022/03/08/golang/memory-gc-escape/" title="浅析 Golang 内存机制（内存分配、GC、内存逃逸）">浅析 Golang 内存机制（内存分配、GC、内存逃逸）</a><time datetime="2022-03-08T14:30:20.000Z" title="发表于 2022-03-08 22:30:20">2022-03-08</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2022 By 安小下同学</div><div class="footer_custom_text"><a target="_blank" rel="noopener" href="http://beian.miit.gov.cn/"><img style="height:10px" src="https://img.alicdn.com/imgextra/i3/O1CN012VJ8YA22JOP4XNnCr_!!6000000007099-2-tps-20-20.png">苏ICP备16006718号</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: '4XeGSIKrWdlKmftMDDFy8fRj-gzGzoHsz',
+      appKey: 'Wjn8s1j6JAg3BbYxTNW3nMk9',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('/pluginsSrc/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
