@@ -1,0 +1,232 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>使用 log-pilot + elk 搭建 docker stdout 日志解决方案 | 小下同学</title><meta name="author" content="安小下同学"><meta name="copyright" content="安小下同学"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="使用 log-pilot + elk 搭建 docker stdout 日志解决方案">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 log-pilot + elk 搭建 docker stdout 日志解决方案">
+<meta property="og:url" content="https://blog.linganmin.cn/posts/c1dd7ead/index.html">
+<meta property="og:site_name" content="小下同学">
+<meta property="og:description" content="使用 log-pilot + elk 搭建 docker stdout 日志解决方案">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://graph.linganmin.cn/211107/bf81612871634692c7c423dcc5aef292?x-oss-process=image/format,webp/quality,q_60">
+<meta property="article:published_time" content="2022-08-08T14:40:34.000Z">
+<meta property="article:modified_time" content="2022-12-10T08:04:34.105Z">
+<meta property="article:author" content="安小下同学">
+<meta property="article:tag" content="Docker">
+<meta property="article:tag" content="日志收集">
+<meta property="article:tag" content="DockerCompose">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://graph.linganmin.cn/211107/bf81612871634692c7c423dcc5aef292?x-oss-process=image/format,webp/quality,q_60"><link rel="shortcut icon" href="https://graph.linganmin.cn/201206/fe9c5e8ef76354659ab9c6c8764d6f3d"><link rel="canonical" href="https://blog.linganmin.cn/posts/c1dd7ead/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="KrvBZb2kkH"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?b4e74da1cb3c8b4a65da55116b8cba6f";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '使用 log-pilot + elk 搭建 docker stdout 日志解决方案',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-12-10 16:04:34'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://graph.linganmin.cn/200118/06177d8b92c66f2c3a6fd82cca544f51" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">37</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://graph.linganmin.cn/211107/bf81612871634692c7c423dcc5aef292?x-oss-process=image/format,webp/quality,q_60')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小下同学</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">使用 log-pilot + elk 搭建 docker stdout 日志解决方案</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-08-08T14:40:34.000Z" title="发表于 2022-08-08 22:40:34">2022-08-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-12-10T08:04:34.105Z" title="更新于 2022-12-10 16:04:34">2022-12-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/">云原生</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="使用 log-pilot + elk 搭建 docker stdout 日志解决方案"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>最近在写一个<code>Golang</code>的微服务项目，受限于企业内部网络等各种问题，日志无法上云只好自建日志收集管理平台了，记录一下实现方式。</p>
+<blockquote>
+<p>整个环境从<code>服务</code>到<code>elk</code>到<code>log-pilot</code>均使用<code>docker-compose</code>部署</p>
+</blockquote>
+<h2 id="log-pilot-介绍"><a href="#log-pilot-介绍" class="headerlink" title="log-pilot 介绍"></a>log-pilot 介绍</h2><p>log-Pilot 是一个阿里云开源的一款智能容器日志采集工具，它不仅能够高效便捷地将容器日志采集输出到多种存储日志后端，同时还能够动态地发现和采集容器内部的日志文件。log-pilot 通过声明式配置实现强大的容器事件管理，可同时获取容器标准输出和内部文件日志，解决了动态伸缩问题，此外，log-pilot 具有自动发现机制，CheckPoint 及句柄保持的机制，自动日志数据打标，有效应对动态配置、日志重复和丢失以及日志源标记等问题。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/AliyunContainerService/log-pilot?spm=a2c4g.11186623.0.0.496d2874ZxMmdE">log-Pilot代码仓库</a></p>
+<h3 id="log-pilot-特性"><a href="#log-pilot-特性" class="headerlink" title="log-pilot 特性"></a>log-pilot 特性</h3><ul>
+<li>一个单独的 log 进程收集机器上所有容器的日志。不需要为每个容器启动一个 log 进程。</li>
+<li>支持文件日志和 stdout<ul>
+<li>docker log dirver 亦或 logspout 只能处理 stdout，log-pilot 不仅支持收集 stdout 日志，还可以收集文件日志。</li>
+</ul>
+</li>
+<li>声明式配置<ul>
+<li>当你的容器有日志要收集，只要通过 label 声明要收集的日志文件的路径，无需改动其他任何配置，log-pilot 就会自动收集新容器的日志。</li>
+</ul>
+</li>
+<li>支持多种日志存储方式<ul>
+<li>无论是强大的阿里云日志服务，还是比较流行的 elasticsearch 组合，甚至是 graylog，log-pilot 都能把日志投递到正确的地点。</li>
+</ul>
+</li>
+</ul>
+<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><h3 id="创建共用-docker-网桥"><a href="#创建共用-docker-网桥" class="headerlink" title="创建共用 docker 网桥"></a>创建共用 docker 网桥</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker network create tools </span><br></pre></td></tr></table></figure>
+
+<h3 id="ELK"><a href="#ELK" class="headerlink" title="ELK"></a>ELK</h3><p>先在宿主机上执行如下命令，防止报错<code>max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]</code></p>
+<blockquote>
+<p>max_map_count文件包含限制一个进程可以拥有的VMA(虚拟内存区域)的数量</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo sysctl -w vm.max_map_count=262144</span><br></pre></td></tr></table></figure>
+
+<h4 id="ekl-容器编排文件"><a href="#ekl-容器编排文件" class="headerlink" title="ekl 容器编排文件"></a>ekl 容器编排文件</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;3&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">elk:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">sebp/elk:latest</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="comment"># 因为使用到的这个 ekl 镜像 默认开启了安全模式，如果不想使用可以参考下面文件内容，将 xpack.security.enabled 设为 false，配置文件挂载进容器</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./config/elasticsearch.yml:/etc/elasticsearch/elasticsearch.yml</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;5601:5601&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;9200:9200&quot;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;5044:5044&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">default:</span></span><br><span class="line">    <span class="attr">external:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">tools</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="elasticsearch-配置文件关闭-security"><a href="#elasticsearch-配置文件关闭-security" class="headerlink" title="elasticsearch 配置文件关闭 security"></a>elasticsearch 配置文件关闭 security</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">node.name:</span> <span class="string">elk</span></span><br><span class="line"></span><br><span class="line"><span class="attr">path.repo:</span> <span class="string">/var/backups</span></span><br><span class="line"></span><br><span class="line"><span class="attr">network.host:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span></span><br><span class="line"></span><br><span class="line"><span class="attr">cluster.initial_master_nodes:</span> [<span class="string">&quot;elk&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="attr">xpack.security.enabled:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动</span></span><br><span class="line">docker-compose up -d</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看容器状态</span></span><br><span class="line">docker-compose ps</span><br><span class="line">  Name              Command           State                              Ports</span><br><span class="line">---------------------------------------------------------------------------------------------------------</span><br><span class="line">elk_elk_1   /usr/local/bin/start.sh   Up      0.0.0.0:5044-&gt;5044/tcp,:::5044-&gt;5044/tcp,</span><br><span class="line">                                              0.0.0.0:5601-&gt;5601/tcp,:::5601-&gt;5601/tcp,</span><br><span class="line">                                              0.0.0.0:9200-&gt;9200/tcp,:::9200-&gt;9200/tcp, 9300/tcp,</span><br><span class="line">                                              9600/tcp</span><br></pre></td></tr></table></figure>
+
+<h4 id="访问"><a href="#访问" class="headerlink" title="访问"></a>访问</h4><p>从上面我们就可以看到elk容器暴露出的几个端口，通过<code>http://yourhost:5601</code>和<code>http://yourhost:9200</code>访问 dashboard 和 ES</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">curl 127.0.0.1:9200</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;name&quot;</span> : <span class="string">&quot;elk&quot;</span>,</span><br><span class="line">  <span class="string">&quot;cluster_name&quot;</span> : <span class="string">&quot;elasticsearch&quot;</span>,</span><br><span class="line">  <span class="string">&quot;cluster_uuid&quot;</span> : <span class="string">&quot;CAKwVjUERpWGpUbxdL2N7A&quot;</span>,</span><br><span class="line">  <span class="string">&quot;version&quot;</span> : &#123;</span><br><span class="line">    <span class="string">&quot;number&quot;</span> : <span class="string">&quot;7.15.0&quot;</span>,</span><br><span class="line">    <span class="string">&quot;build_flavor&quot;</span> : <span class="string">&quot;default&quot;</span>,</span><br><span class="line">    <span class="string">&quot;build_type&quot;</span> : <span class="string">&quot;tar&quot;</span>,</span><br><span class="line">    <span class="string">&quot;build_hash&quot;</span> : <span class="string">&quot;79d65f6e357953a5b3cbcc5e2c7c21073d89aa29&quot;</span>,</span><br><span class="line">    <span class="string">&quot;build_date&quot;</span> : <span class="string">&quot;2021-09-16T03:05:29.143308416Z&quot;</span>,</span><br><span class="line">    <span class="string">&quot;build_snapshot&quot;</span> : <span class="literal">false</span>,</span><br><span class="line">    <span class="string">&quot;lucene_version&quot;</span> : <span class="string">&quot;8.9.0&quot;</span>,</span><br><span class="line">    <span class="string">&quot;minimum_wire_compatibility_version&quot;</span> : <span class="string">&quot;6.8.0&quot;</span>,</span><br><span class="line">    <span class="string">&quot;minimum_index_compatibility_version&quot;</span> : <span class="string">&quot;6.0.0-beta1&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;tagline&quot;</span> : <span class="string">&quot;You Know, for Search&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://graph.linganmin.cn/211107/56b85f51c02e044cb31f9c30c5fc92db?x-oss-process=image/format,webp/quality,q_60" alt="dashboard"></p>
+<h3 id="log-pilot"><a href="#log-pilot" class="headerlink" title="log-pilot"></a>log-pilot</h3><h4 id="编排文件"><a href="#编排文件" class="headerlink" title="编排文件"></a>编排文件</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">logpilot:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">registry.cn-hangzhou.aliyuncs.com/acs/log-pilot:0.9.7-fluentd</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">privileged:</span> <span class="literal">true</span> <span class="comment"># 这里要注意，我就踩了坑。不加容器会启动失败，提示权限受限</span></span><br><span class="line">    <span class="attr">command:</span></span><br><span class="line">      <span class="string">--privileged</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/var/run/docker.sock:/var/run/docker.sock</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/:/host</span> <span class="comment"># 将宿主机根目录挂载到容器的host目录下，容器内log-pilot程序是采集的/host下的日志</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">FLUENTD_OUTPUT:</span> <span class="string">elasticsearch</span> <span class="comment"># 按需替换，把日志发送到 ElasticSearch，可以参考仓库代码将载体更换为你需要的</span></span><br><span class="line">      <span class="attr">ELASTICSEARCH_HOST:</span> <span class="string">elk</span> <span class="comment"># 按需替换，ElasticSearch 的域名</span></span><br><span class="line">      <span class="attr">ELASTICSEARCH_PORT:</span> <span class="number">9200</span> <span class="comment"># ElasticSearch 的端口号</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">default:</span></span><br><span class="line">    <span class="attr">external:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">tools</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="启动-1"><a href="#启动-1" class="headerlink" title="启动"></a>启动</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d </span><br><span class="line"></span><br><span class="line">docker-compose ps</span><br><span class="line">       Name                      Command               State   Ports</span><br><span class="line">--------------------------------------------------------------------</span><br><span class="line">logpoilt_logpilot_1   /pilot/entrypoint --privileged   Up</span><br></pre></td></tr></table></figure>
+
+<h3 id="自己的容器服务"><a href="#自己的容器服务" class="headerlink" title="自己的容器服务"></a>自己的容器服务</h3><p>我这里启动的是自己<code>golang</code>项目的服务，如果你参考此文档，这里需要部署自己的容器服务，并且服务的日志要采用<code>stdout</code>输出。</p>
+<h4 id="编排文件-1"><a href="#编排文件-1" class="headerlink" title="编排文件"></a>编排文件</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="attr">version:</span> <span class="string">&quot;3&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">gate:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">&quot;换成你自己的镜像地址&quot;</span> <span class="comment"># 要更换为自己的镜像哈！！！！</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">labels:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;aliyun.logs.det=stdout&quot;</span> <span class="comment"># 下面会有关于此label的说明哦，这也是logpilot收集日志的重要标识。</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="启动-2"><a href="#启动-2" class="headerlink" title="启动"></a>启动</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br><span class="line"></span><br><span class="line">docker-compose ps</span><br><span class="line"></span><br><span class="line">   Name                  Command              State   Ports</span><br><span class="line">-----------------------------------------------------------</span><br><span class="line">gate_gate_1   /bin/sh -c ./app -f conf.yaml   Up</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>此时我们访问 ES 就可以看到我们日志的 index 了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl 127.0.0.1:9200/_cat/indices?</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line">yellow open det-2021.11.07                  JS3Y2zuSTt2VhVSwsfNgPg 1 1   191     0 142.3kb 142.3kb</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置-Kibana"><a href="#配置-Kibana" class="headerlink" title="配置 Kibana"></a>配置 Kibana</h3><p>浏览器打开<code>http://yourhost:5601/app/management</code>创建 Index patterns。</p>
+<p><img src="https://graph.linganmin.cn/211107/5250e52e6d21639106bd6314b1a7e371?x-oss-process=image/format,webp/quality,q_60" alt="kibana"></p>
+<p>完成之后访问<code>http://yourhost:5601/app/discover</code>就可以查看日志了</p>
+<p><img src="https://graph.linganmin.cn/211107/c87ccdd23346c385cf77df0f82d60330?x-oss-process=image/format,webp/quality,q_60" alt="discover"></p>
+<h2 id="关于服务容器-label-的说明"><a href="#关于服务容器-label-的说明" class="headerlink" title="关于服务容器 label 的说明"></a>关于服务容器 label 的说明</h2><p>上面启动自己服务时，我声明了下一个<code>label</code>来告诉<code>log-pilot</code>这个容器的日志位置。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">labels:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;aliyun.logs.det=stdout&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>你可以在自己应用容器上添加更多标签，参考官方文档<a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/674327">容器日志采集利器Log-Pilot
+</a></p>
+<p>至此，便实现了使用 log-pilot + elk 搭建 docker stdout 日志解决方案。</p>
+<h2 id="备注"><a href="#备注" class="headerlink" title="备注"></a>备注</h2><p>此方案同样适用于采集容器内部生成的文件日志，但更推荐服务日志使用<code>stdout</code>方式输出。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://blog.linganmin.cn">安小下同学</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://blog.linganmin.cn/posts/c1dd7ead/">https://blog.linganmin.cn/posts/c1dd7ead/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://blog.linganmin.cn" target="_blank">小下同学</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Docker/">Docker</a><a class="post-meta__tags" href="/tags/%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86/">日志收集</a><a class="post-meta__tags" href="/tags/DockerCompose/">DockerCompose</a></div><div class="post_share"><div class="social-share" data-image="https://graph.linganmin.cn/211107/bf81612871634692c7c423dcc5aef292?x-oss-process=image/format,webp/quality,q_60" data-sites="twitter,wechat,weibo"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="https://graph.linganmin.cn/200119/eed3e3ad8e1b81503989ef17fc2c5e7d?x-oss-process=image/format,webp/quality,q_60" target="_blank"><img class="post-qr-code-img" src="https://graph.linganmin.cn/200119/eed3e3ad8e1b81503989ef17fc2c5e7d?x-oss-process=image/format,webp/quality,q_60" alt="请我吃苹果"/></a><div class="post-qr-code-desc">请我吃苹果</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/9a11c27c/"><img class="prev-cover" src="https://graph.linganmin.cn/221209/61c7c60a1231bd6f951d4db4f6330460?x-oss-process=image/format,webp/quality,q_10" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">使用 Docker Compose 实现滚动更新部署</div></div></a></div><div class="next-post pull-right"><a href="/posts/4679c257/"><img class="next-cover" src="https://graph.linganmin.cn/220529/b208e0a803bbec39eab9007b774f2d92?x-oss-process=image/format,webp/quality,q_10" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">搭建基于 Kubernetes 生产可用的日志和监控系统</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/e11179c6/" title="使用 Fluentd + ElasticSearch 搭建 docker stdout 日志解决方案"><img class="cover" src="https://graph.linganmin.cn/220918/09a22a20c3b33f091ac17d50dba2e259?x-oss-process=image/format,webp/quality,q_60" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-12-08</div><div class="title">使用 Fluentd + ElasticSearch 搭建 docker stdout 日志解决方案</div></div></a></div><div><a href="/posts/6e927641/" title="Docker 基础"><img class="cover" src="https://graph.linganmin.cn/200911/4043741d339ab2812a46836518975aa7?x-oss-process=image/format,webp/quality,q_10" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-07-11</div><div class="title">Docker 基础</div></div></a></div><div><a href="/posts/9a11c27c/" title="使用 Docker Compose 实现滚动更新部署"><img class="cover" src="https://graph.linganmin.cn/221209/61c7c60a1231bd6f951d4db4f6330460?x-oss-process=image/format,webp/quality,q_10" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-09-09</div><div class="title">使用 Docker Compose 实现滚动更新部署</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://graph.linganmin.cn/200118/06177d8b92c66f2c3a6fd82cca544f51" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">安小下同学</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">37</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/linganmin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:saboranmin@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://www.weibo.com/u/1793963601" target="_blank" title="Weibo"><i class="fab fa-weibo"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">来日方短，道阻且长，好好吃饭，保重身体，任寅虎年快乐 ^_^</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#log-pilot-%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">log-pilot 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#log-pilot-%E7%89%B9%E6%80%A7"><span class="toc-number">1.1.</span> <span class="toc-text">log-pilot 特性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2"><span class="toc-number">2.</span> <span class="toc-text">部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%85%B1%E7%94%A8-docker-%E7%BD%91%E6%A1%A5"><span class="toc-number">2.1.</span> <span class="toc-text">创建共用 docker 网桥</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ELK"><span class="toc-number">2.2.</span> <span class="toc-text">ELK</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ekl-%E5%AE%B9%E5%99%A8%E7%BC%96%E6%8E%92%E6%96%87%E4%BB%B6"><span class="toc-number">2.2.1.</span> <span class="toc-text">ekl 容器编排文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#elasticsearch-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%85%B3%E9%97%AD-security"><span class="toc-number">2.2.2.</span> <span class="toc-text">elasticsearch 配置文件关闭 security</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8"><span class="toc-number">2.2.3.</span> <span class="toc-text">启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE"><span class="toc-number">2.2.4.</span> <span class="toc-text">访问</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#log-pilot"><span class="toc-number">2.3.</span> <span class="toc-text">log-pilot</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E6%8E%92%E6%96%87%E4%BB%B6"><span class="toc-number">2.3.1.</span> <span class="toc-text">编排文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8-1"><span class="toc-number">2.3.2.</span> <span class="toc-text">启动</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%B9%E5%99%A8%E6%9C%8D%E5%8A%A1"><span class="toc-number">2.4.</span> <span class="toc-text">自己的容器服务</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E6%8E%92%E6%96%87%E4%BB%B6-1"><span class="toc-number">2.4.1.</span> <span class="toc-text">编排文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8-2"><span class="toc-number">2.4.2.</span> <span class="toc-text">启动</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-Kibana"><span class="toc-number">2.5.</span> <span class="toc-text">配置 Kibana</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%AE%B9%E5%99%A8-label-%E7%9A%84%E8%AF%B4%E6%98%8E"><span class="toc-number">3.</span> <span class="toc-text">关于服务容器 label 的说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%87%E6%B3%A8"><span class="toc-number">4.</span> <span class="toc-text">备注</span></a></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2022 By 安小下同学</div><div class="footer_custom_text"><a target="_blank" rel="noopener" href="http://beian.miit.gov.cn/"><img style="height:10px" src="https://img.alicdn.com/imgextra/i3/O1CN012VJ8YA22JOP4XNnCr_!!6000000007099-2-tps-20-20.png">苏ICP备16006718号</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: '4XeGSIKrWdlKmftMDDFy8fRj-gzGzoHsz',
+      appKey: 'Wjn8s1j6JAg3BbYxTNW3nMk9',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('/pluginsSrc/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
