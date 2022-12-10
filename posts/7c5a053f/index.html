@@ -1,0 +1,314 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>「MySQL 拾遗」之 增删查改 | 小下同学</title><meta name="author" content="安小下同学"><meta name="copyright" content="安小下同学"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="MySQL 基础知识，增删查改">
+<meta property="og:type" content="article">
+<meta property="og:title" content="「MySQL 拾遗」之 增删查改">
+<meta property="og:url" content="https://blog.linganmin.cn/posts/7c5a053f/index.html">
+<meta property="og:site_name" content="小下同学">
+<meta property="og:description" content="MySQL 基础知识，增删查改">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://graph.linganmin.cn/201007/f4579b44bb4078b0f0f9bcc986f56d73?x-oss-process=image/format,webp/quality,q_10">
+<meta property="article:published_time" content="2020-07-07T14:03:00.000Z">
+<meta property="article:modified_time" content="2022-12-10T08:04:47.350Z">
+<meta property="article:author" content="安小下同学">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://graph.linganmin.cn/201007/f4579b44bb4078b0f0f9bcc986f56d73?x-oss-process=image/format,webp/quality,q_10"><link rel="shortcut icon" href="https://graph.linganmin.cn/201206/fe9c5e8ef76354659ab9c6c8764d6f3d"><link rel="canonical" href="https://blog.linganmin.cn/posts/7c5a053f/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="KrvBZb2kkH"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?b4e74da1cb3c8b4a65da55116b8cba6f";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '「MySQL 拾遗」之 增删查改',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2022-12-10 16:04:47'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://graph.linganmin.cn/200118/06177d8b92c66f2c3a6fd82cca544f51" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">37</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://graph.linganmin.cn/201007/f4579b44bb4078b0f0f9bcc986f56d73?x-oss-process=image/format,webp/quality,q_40')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小下同学</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">「MySQL 拾遗」之 增删查改</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-07-07T14:03:00.000Z" title="发表于 2020-07-07 22:03:00">2020-07-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-12-10T08:04:47.350Z" title="更新于 2022-12-10 16:04:47">2022-12-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="「MySQL 拾遗」之 增删查改"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>就只是把很多年前学的东西捡起来看一下，虽然对于一个<code>研发工程师</code>来说，这些都是再基本不过的知识了，但长时间不看呢记忆总会模糊。。。</p>
+<ul>
+<li><p>连接数据库</p>
+<blockquote>
+<p>mysql -h [数据库地址] -u [用户名] -p</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 回车后输入密码</span></span><br><span class="line">⚡  mysql -h 127.0.0.1 -u root -p root</span><br><span class="line">Enter password: root</span><br><span class="line">Welcome to the MySQL monitor.  Commands end with ; or \g.</span><br><span class="line">Your MySQL connection <span class="built_in">id</span> is 5</span><br><span class="line">Server version: 5.7.22 MySQL Community Server (GPL)</span><br><span class="line"></span><br><span class="line">Copyright (c) 2000, 2019, Oracle and/or its affiliates. All rights reserved.</span><br><span class="line"></span><br><span class="line">Oracle is a registered trademark of Oracle Corporation and/or its</span><br><span class="line">affiliates. Other names may be trademarks of their respective</span><br><span class="line">owners.</span><br><span class="line"></span><br><span class="line">Type <span class="string">&#x27;help;&#x27;</span> or <span class="string">&#x27;\h&#x27;</span> <span class="keyword">for</span> <span class="built_in">help</span>. Type <span class="string">&#x27;\c&#x27;</span> to clear the current input statement.</span><br><span class="line">mysql&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看当前实例中有哪些数据库</p>
+<blockquote>
+<p>show databases;</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show databases;</span><br><span class="line">+--------------------+</span><br><span class="line">| Database           |</span><br><span class="line">+--------------------+</span><br><span class="line">| information_schema |</span><br><span class="line">| mysql              |</span><br><span class="line">| performance_schema |</span><br><span class="line">| sys                |</span><br><span class="line">+--------------------+</span><br><span class="line">5 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.02 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建一个数据库</p>
+<blockquote>
+<p>create database [数据库名] charset&#x3D;[字符集类型];</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; create database my_database charset=utf8mb4;</span><br><span class="line">Query OK, 1 row affected (0.01 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>选择创建的数据库</p>
+<blockquote>
+<p>use [数据库名];</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; use my_database ;</span><br><span class="line">Database changed</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看当前数据库中有哪些表</p>
+<blockquote>
+<p>show tables;</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 空的数据库</span></span><br><span class="line">mysql&gt; show tables ;</span><br><span class="line">Empty <span class="built_in">set</span> (0.01 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建一个表</p>
+<blockquote>
+<p>create table [表名] ([各种字段…]);</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; create table <span class="built_in">users</span> (</span><br><span class="line">    -&gt;   `<span class="built_in">id</span>` int(11) unsigned NOT NULL AUTO_INCREMENT,</span><br><span class="line">    -&gt;   `username` varchar(20) NOT NULL DEFAULT <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    -&gt;   `gender` tinyint(4) NOT NULL DEFAULT <span class="string">&#x27;0&#x27;</span> COMMENT <span class="string">&quot;0: 保密，1：男，2：女&quot;</span>,</span><br><span class="line">    -&gt;   `status` tinyint(4) NOT NULL DEFAULT <span class="string">&#x27;1&#x27;</span> COMMENT <span class="string">&quot;1: 正常， 10：禁用&quot;</span>,</span><br><span class="line">    -&gt;   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,</span><br><span class="line">    -&gt;   `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,</span><br><span class="line">    -&gt;   PRIMARY KEY (`<span class="built_in">id</span>`)</span><br><span class="line">    -&gt; )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;</span><br><span class="line">Query OK, 0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>显示表结构</p>
+<blockquote>
+<p>desc [表名];</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; desc <span class="built_in">users</span>;</span><br><span class="line">+-------------+------------------+------+-----+-------------------+-----------------------------+</span><br><span class="line">| Field       | Type             | Null | Key | Default           | Extra                       |</span><br><span class="line">+-------------+------------------+------+-----+-------------------+-----------------------------+</span><br><span class="line">| <span class="built_in">id</span>          | int(11) unsigned | NO   | PRI | NULL              | auto_increment              |</span><br><span class="line">| username    | varchar(20)      | NO   |     |                   |                             |</span><br><span class="line">| gender      | tinyint(4)       | NO   |     | 0                 |                             |</span><br><span class="line">| status      | tinyint(4)       | NO   |     | 1                 |                             |</span><br><span class="line">| create_time | datetime         | YES  |     | CURRENT_TIMESTAMP |                             |</span><br><span class="line">| update_time | datetime         | YES  |     | CURRENT_TIMESTAMP | on update CURRENT_TIMESTAMP |</span><br><span class="line">+-------------+------------------+------+-----+-------------------+-----------------------------+</span><br><span class="line">6 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.01 sec)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>往表中插入记录</p>
+<blockquote>
+<p>inster into [表名] (列名1,列名2,…) values(列值1, 列值2,…);</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 新增单条记录</span></span><br><span class="line">mysql&gt; insert into <span class="built_in">users</span> (username,gender) values (<span class="string">&quot;小下&quot;</span>, 1);</span><br><span class="line">Query OK, 1 row affected (0.00 sec)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 新增多条记录</span></span><br><span class="line">mysql&gt; insert into <span class="built_in">users</span> (username,gender) values (<span class="string">&quot;大上&quot;</span>, 10), (<span class="string">&quot;saboran&quot;</span>,1);</span><br><span class="line">Query OK, 2 rows affected (0.00 sec)</span><br><span class="line">Records: 2  Duplicates: 0  Warnings: 0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查询</p>
+<ul>
+<li><p>所有列</p>
+<blockquote>
+<p>select * from [表名];</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from <span class="built_in">users</span>;</span><br><span class="line">+----+----------+--------+--------+---------------------+---------------------+</span><br><span class="line">| <span class="built_in">id</span> | username | gender | status | create_time         | update_time         |</span><br><span class="line">+----+----------+--------+--------+---------------------+---------------------+</span><br><span class="line">|  1 | 小下     |      1 |      1 | 2020-10-07 15:35:49 | 2020-10-07 15:35:49 |</span><br><span class="line">|  2 | 大上     |     10 |      1 | 2020-10-07 15:50:50 | 2020-10-07 15:50:50 |</span><br><span class="line">|  3 | saboran  |      1 |      1 | 2020-10-07 15:50:50 | 2020-10-07 15:50:50 |</span><br><span class="line">+----+----------+--------+--------+---------------------+---------------------+</span><br><span class="line">3 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>去重</p>
+<blockquote>
+<p>select distinct [列名] from [表名]</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select distinct gender from <span class="built_in">users</span> ;</span><br><span class="line">+--------+</span><br><span class="line">| gender |</span><br><span class="line">+--------+</span><br><span class="line">|      1 |</span><br><span class="line">|     10 |</span><br><span class="line">+--------+</span><br><span class="line">2 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>统计个数</p>
+<blockquote>
+<p>select count(*) from [表名];</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select count(*) from <span class="built_in">users</span> ;</span><br><span class="line">+----------+</span><br><span class="line">| count(*) |</span><br><span class="line">+----------+</span><br><span class="line">|        3 |</span><br><span class="line">+----------+</span><br><span class="line">1 row <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>指定列</p>
+<blockquote>
+<p>select [列名1, 列名2, …] from [表名];</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select username, status from <span class="built_in">users</span>;</span><br><span class="line">+----------+--------+</span><br><span class="line">| username | status |</span><br><span class="line">+----------+--------+</span><br><span class="line">| 小下     |      1 |</span><br><span class="line">| 大上     |      1 |</span><br><span class="line">| saboran  |      1 |</span><br><span class="line">+----------+--------+</span><br><span class="line">3 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.01 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>带查询条件</p>
+<blockquote>
+<p>select * from [表名] where [条件] ; &#x2F;&#x2F; 查询条件包括： &gt;、&lt;、&#x3D;、like、not、and 、or 、in 等</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from <span class="built_in">users</span> <span class="built_in">where</span> gender = 10 ;</span><br><span class="line">+----+----------+--------+--------+---------------------+---------------------+</span><br><span class="line">| <span class="built_in">id</span> | username | gender | status | create_time         | update_time         |</span><br><span class="line">+----+----------+--------+--------+---------------------+---------------------+</span><br><span class="line">|  2 | 大上     |     10 |      1 | 2020-10-07 15:50:50 | 2020-10-07 15:50:50 |</span><br><span class="line">+----+----------+--------+--------+---------------------+---------------------+</span><br><span class="line">1 row <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>限制数量</p>
+<blockquote>
+<p>select * from [表名] limit [数量];</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from <span class="built_in">users</span> <span class="built_in">limit</span> 1 ;</span><br><span class="line">+----+----------+--------+--------+---------------------+---------------------+</span><br><span class="line">| <span class="built_in">id</span> | username | gender | status | create_time         | update_time         |</span><br><span class="line">+----+----------+--------+--------+---------------------+---------------------+</span><br><span class="line">|  1 | 小下     |      1 |      1 | 2020-10-07 15:35:49 | 2020-10-07 15:35:49 |</span><br><span class="line">+----+----------+--------+--------+---------------------+---------------------+</span><br><span class="line">1 row <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>排序</p>
+<blockquote>
+<p>select * from [表名] order by [列名] [排序规则]; &#x2F;&#x2F; asc: 正序（默认），desc：倒序</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from <span class="built_in">users</span> order by <span class="built_in">id</span> desc ;</span><br><span class="line">+----+----------+--------+--------+---------------------+---------------------+</span><br><span class="line">| <span class="built_in">id</span> | username | gender | status | create_time         | update_time         |</span><br><span class="line">+----+----------+--------+--------+---------------------+---------------------+</span><br><span class="line">|  3 | saboran  |      1 |      1 | 2020-10-07 15:50:50 | 2020-10-07 15:50:50 |</span><br><span class="line">|  2 | 大上     |     10 |      1 | 2020-10-07 15:50:50 | 2020-10-07 15:50:50 |</span><br><span class="line">|  1 | 小下     |      1 |      1 | 2020-10-07 15:35:49 | 2020-10-07 15:35:49 |</span><br><span class="line">+----+----------+--------+--------+---------------------+---------------------+</span><br><span class="line">3 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>分组</p>
+<blockquote>
+<p>select [列名1], count(*) from users group by [列名1];</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select gender,count(*) from <span class="built_in">users</span>  group by gender ;</span><br><span class="line">+--------+----------+</span><br><span class="line">| gender | count(*) |</span><br><span class="line">+--------+----------+</span><br><span class="line">|      1 |        2 |</span><br><span class="line">|     10 |        1 |</span><br><span class="line">+--------+----------+</span><br><span class="line">2 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.01 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Having 子语句</p>
+<p>having 子句是对分组后的结果进行筛选，语法和 where 差不多。</p>
+<p>区别:</p>
+<ol>
+<li>having 只能用于<code>group by</code>之后，对分组后的结果进行筛选。</li>
+<li>where 后面的语句不能使用聚合函数，但 having 可以。</li>
+<li>having 后面的条件只能使用<code>group by</code>的字段，<code>group by</code>的字段也可以使用聚合函数，即按照字段聚合后的条件分组</li>
+</ol>
+<p>where、group by、having、order by 执行顺序:</p>
+<ol>
+<li>先执行 where xxx 进行全表筛选，返回第一个结果集</li>
+<li>执行 group by 对第一个结果集进行分组，返回第二个结果集</li>
+<li>对第二个结果集中的每一组数据执行 select xxx, 返回第三个结果集</li>
+<li>执行 having 对第三个结果集进行筛选，返回第四个结果集</li>
+<li>执行 order by 对第四个结果集排序</li>
+</ol>
+ <div class="note info flat"><p>执行顺序：where &gt; group by &gt; having &gt; order by
+     </p>
+</div>
+
+<blockquote>
+<p>select [列名1], count(*) from [表名] where [条件] group by [列名1] having [条件]</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select gender,count(*) from <span class="built_in">users</span> <span class="built_in">where</span> status = 1  group by gender having gender &gt; 0 ;</span><br><span class="line">+--------+----------+</span><br><span class="line">| gender | count(*) |</span><br><span class="line">+--------+----------+</span><br><span class="line">|      1 |        2 |</span><br><span class="line">|     10 |        1 |</span><br><span class="line">+--------+----------+</span><br><span class="line">2 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.00 sec)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>更新表中的数据</p>
+<blockquote>
+<p>update [表名] set [列名1] &#x3D; [值1], [列名2] &#x3D; [值2] where [条件]</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; update <span class="built_in">users</span> <span class="built_in">set</span> gender = 2 , status = 10 <span class="built_in">where</span> <span class="built_in">id</span> = 2;</span><br><span class="line">Query OK, 1 row affected (0.00 sec)</span><br><span class="line">Rows matched: 1  Changed: 1  Warnings: 0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>清空表</p>
+<blockquote>
+<p>delete from [表名];</p>
+</blockquote>
+</li>
+<li><p>删除表</p>
+<blockquote>
+<p>drop table [表名];</p>
+</blockquote>
+</li>
+<li><p>事务</p>
+<p>事务具有<code>原子性(Atomicity)</code>、<code>一致性(Consistency)</code>、<code>隔离性(Isolation)</code>、<code>持久性(Durability)</code>四个标准属性，缩写为<code>ACID</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-- 提交</span><br><span class="line">BEGIN;</span><br><span class="line">INSERT INTO ...</span><br><span class="line">...</span><br><span class="line">COMMIT;</span><br><span class="line">-- 回滚</span><br><span class="line">BEGIN;</span><br><span class="line">...</span><br><span class="line">ROLLBACK;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://blog.linganmin.cn">安小下同学</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://blog.linganmin.cn/posts/7c5a053f/">https://blog.linganmin.cn/posts/7c5a053f/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://blog.linganmin.cn" target="_blank">小下同学</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/MySQL/">MySQL</a></div><div class="post_share"><div class="social-share" data-image="https://graph.linganmin.cn/201007/f4579b44bb4078b0f0f9bcc986f56d73?x-oss-process=image/format,webp/quality,q_10" data-sites="twitter,wechat,weibo"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="https://graph.linganmin.cn/200119/eed3e3ad8e1b81503989ef17fc2c5e7d?x-oss-process=image/format,webp/quality,q_60" target="_blank"><img class="post-qr-code-img" src="https://graph.linganmin.cn/200119/eed3e3ad8e1b81503989ef17fc2c5e7d?x-oss-process=image/format,webp/quality,q_60" alt="请我吃苹果"/></a><div class="post-qr-code-desc">请我吃苹果</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/6e927641/"><img class="prev-cover" src="https://graph.linganmin.cn/200911/4043741d339ab2812a46836518975aa7?x-oss-process=image/format,webp/quality,q_10" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Docker 基础</div></div></a></div><div class="next-post pull-right"><a href="/posts/3c629974/"><img class="next-cover" src="https://graph.linganmin.cn/200504/a2ba3fcf540a33577ebde34d3d0e5bab?x-oss-process=image/format,webp/quality,q_10" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">新 Mac 软件安装</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://graph.linganmin.cn/200118/06177d8b92c66f2c3a6fd82cca544f51" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">安小下同学</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">37</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/linganmin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:saboranmin@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://www.weibo.com/u/1793963601" target="_blank" title="Weibo"><i class="fab fa-weibo"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">来日方短，道阻且长，好好吃饭，保重身体，圣诞节🎄快乐 ^_^</div></div><div class="sticky_layout"></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2022 By 安小下同学</div><div class="footer_custom_text"><a target="_blank" rel="noopener" href="http://beian.miit.gov.cn/"><img style="height:10px" src="https://img.alicdn.com/imgextra/i3/O1CN012VJ8YA22JOP4XNnCr_!!6000000007099-2-tps-20-20.png">苏ICP备16006718号</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: '4XeGSIKrWdlKmftMDDFy8fRj-gzGzoHsz',
+      appKey: 'Wjn8s1j6JAg3BbYxTNW3nMk9',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('/pluginsSrc/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

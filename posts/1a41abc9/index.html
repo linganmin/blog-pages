@@ -1,0 +1,206 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>「深入学习 Golang」之 切片（slice）、数组（array） | 小下同学</title><meta name="author" content="安小下同学"><meta name="copyright" content="安小下同学"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="golang 切片（slice）和数组（array）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="「深入学习 Golang」之 切片（slice）、数组（array）">
+<meta property="og:url" content="https://blog.linganmin.cn/posts/1a41abc9/index.html">
+<meta property="og:site_name" content="小下同学">
+<meta property="og:description" content="golang 切片（slice）和数组（array）">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://graph.linganmin.cn/201007/87122d3084205a5821b1e39413e84349?x-oss-process=image/format,webp/quality,q_10">
+<meta property="article:published_time" content="2020-10-06T21:30:20.000Z">
+<meta property="article:modified_time" content="2022-12-10T08:04:40.693Z">
+<meta property="article:author" content="安小下同学">
+<meta property="article:tag" content="Golang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://graph.linganmin.cn/201007/87122d3084205a5821b1e39413e84349?x-oss-process=image/format,webp/quality,q_10"><link rel="shortcut icon" href="https://graph.linganmin.cn/201206/fe9c5e8ef76354659ab9c6c8764d6f3d"><link rel="canonical" href="https://blog.linganmin.cn/posts/1a41abc9/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="KrvBZb2kkH"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?b4e74da1cb3c8b4a65da55116b8cba6f";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '「深入学习 Golang」之 切片（slice）、数组（array）',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-12-10 16:04:40'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://graph.linganmin.cn/200118/06177d8b92c66f2c3a6fd82cca544f51" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">37</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://graph.linganmin.cn/201007/87122d3084205a5821b1e39413e84349?x-oss-process=image/format,webp/quality,q_40')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小下同学</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">「深入学习 Golang」之 切片（slice）、数组（array）</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-10-06T21:30:20.000Z" title="发表于 2020-10-07 05:30:20">2020-10-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-12-10T08:04:40.693Z" title="更新于 2022-12-10 16:04:40">2022-12-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%A5%BD%E5%A5%BD%E5%AD%A6%E4%B9%A0/">好好学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="「深入学习 Golang」之 切片（slice）、数组（array）"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><blockquote>
+<p>数组是由相同类型元素组合成的数据结构，计算机会为数组分配一块<code>连续的内存</code>来保存其中的元素。我们可以利用数组中元素的索引，快速访问元素对应的存储地址。</p>
+</blockquote>
+<div class="note info flat"><ol>
+<li>Go 语言中数组在初始化之后大小是无法改变的。</li>
+<li>存储元素类型相同，但大小不同的数组在 GO 语言中是完全不同的</li>
+</ol>
+</div>
+
+<h3 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h3><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">arr1 := [<span class="number">3</span>]<span class="type">uint64</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125; <span class="comment">// 显示指定数组大小</span></span><br><span class="line">arr2 := [...]<span class="type">uint64</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125; <span class="comment">// 在编译期间通过源码对数组大小进行推导</span></span><br></pre></td></tr></table></figure>
+
+<p>如果数组中元素个数小于或等于4个，那么所有的变量都会直接在栈上初始化；如果数组元素大于4个，变量就会在静态存储区初始化然后拷贝到栈上。</p>
+<h3 id="访问和赋值"><a href="#访问和赋值" class="headerlink" title="访问和赋值"></a>访问和赋值</h3><p>数组在内存中就是一连串的内存空间，表示数组的方法是一个指向数组开头的指针、数组中元素的数量以及数组中元素类型站的空间大小。</p>
+<p>如果我们不知道数组中元素的数量，访问时就可能发生越界，数组访问越界是非常严重的错误。</p>
+<p>对数组的访问和复制需要同时依赖编译器和运行时，它的大多数操作在编译期间都会转换成对内存的直接读写，在中间代码生产期间还会插入运行时方法<code>panicIndex</code>调用，防止发生越界错误。</p>
+<h2 id="切片"><a href="#切片" class="headerlink" title="切片"></a>切片</h2><p>切片是动态数组，他的长度不固定，我们可以随意向切片中追加元素，切片也会在容量不足时自动扩容。</p>
+<h3 id="创建-1"><a href="#创建-1" class="headerlink" title="创建"></a>创建</h3><h4 id="使用下标"><a href="#使用下标" class="headerlink" title="使用下标"></a>使用下标</h4><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sl1 := arr[<span class="number">0</span>:<span class="number">3</span>]</span><br><span class="line">sl2 := slice[<span class="number">0</span>:<span class="number">4</span>] <span class="comment">// 通过下标方式从数组或者切片中截取</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>使用下标方式初始化切片不会造成原始数组或者切片中数据的拷贝，他只会创建一个指向原始数组的切片值，所以修改切片的数据也会修改原始切片和数组。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">arr := [<span class="number">10</span>]<span class="type">int32</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>&#125;</span><br><span class="line">sl1 := arr[<span class="number">0</span>:<span class="number">5</span>]</span><br><span class="line">fmt.Printf(<span class="string">&quot;arr.0.memory.address：%p,sl1.0.memory.address：%p\n&quot;</span>, &amp;arr[<span class="number">0</span>], &amp;sl1[<span class="number">0</span>]) <span class="comment">// arr.0.memory.address：0xc0000b6000,sl1.0.memory.address：0xc0000b6000</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="使用字面量"><a href="#使用字面量" class="headerlink" title="使用字面量"></a>使用字面量</h4><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">slice := []<span class="type">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>根据切片中的元素数量对底层数组大小进行判断并创建一个数组</li>
+<li>将这些字面量元素存储到初始化的数组中</li>
+<li>创建一个同样指向初始化数组类型的数组指针</li>
+<li>将静态存储区的数组赋值给数组指针</li>
+<li>通过 [:] 操作，获取一个指针指向数组指针的切片</li>
+</ol>
+<h4 id="使用关键字"><a href="#使用关键字" class="headerlink" title="使用关键字"></a>使用关键字</h4><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">slice := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">10</span>,<span class="number">10</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果使用字面量方式创建切片，大部分工作都会在编译期间完成。但当我们使用<code>make</code>关键字创建切片时，很多工作都需要运行时的参与。</p>
+<h3 id="访问元素"><a href="#访问元素" class="headerlink" title="访问元素"></a>访问元素</h3><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">slice := []<span class="type">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">4</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">len</span>(slice) <span class="comment">// 取长度</span></span><br><span class="line"><span class="built_in">cap</span>(slice) <span class="comment">// 取容量</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> _,_ <span class="keyword">range</span> slice&#123; <span class="comment">// 遍历切片</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="追加和扩容"><a href="#追加和扩容" class="headerlink" title="追加和扩容"></a>追加和扩容</h3><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">slice := []<span class="type">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;</span><br><span class="line"></span><br><span class="line">slice = <span class="built_in">append</span>(slice, <span class="number">4</span>) <span class="comment">// 使用 append 追加元素</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>扩容参考文章：<a target="_blank" rel="noopener" href="https://juejin.im/post/6844903812331732999">https://juejin.im/post/6844903812331732999</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://blog.linganmin.cn">安小下同学</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://blog.linganmin.cn/posts/1a41abc9/">https://blog.linganmin.cn/posts/1a41abc9/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://blog.linganmin.cn" target="_blank">小下同学</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Golang/">Golang</a></div><div class="post_share"><div class="social-share" data-image="https://graph.linganmin.cn/201007/87122d3084205a5821b1e39413e84349?x-oss-process=image/format,webp/quality,q_10" data-sites="twitter,wechat,weibo"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="https://graph.linganmin.cn/200119/eed3e3ad8e1b81503989ef17fc2c5e7d?x-oss-process=image/format,webp/quality,q_60" target="_blank"><img class="post-qr-code-img" src="https://graph.linganmin.cn/200119/eed3e3ad8e1b81503989ef17fc2c5e7d?x-oss-process=image/format,webp/quality,q_60" alt="请我吃苹果"/></a><div class="post-qr-code-desc">请我吃苹果</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/31cade2d/"><img class="prev-cover" src="https://graph.linganmin.cn/201007/87122d3084205a5821b1e39413e84349?x-oss-process=image/format,webp/quality,q_10" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">分布式架构中的”一致性“</div></div></a></div><div class="next-post pull-right"><a href="/posts/943537f7/"><img class="next-cover" src="https://graph.linganmin.cn/201007/87122d3084205a5821b1e39413e84349?x-oss-process=image/format,webp/quality,q_10" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">「深入学习 Golang」之 GPM</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/d6715893/" title="浅读 Go 优秀开源项目源码—Gin框架"><img class="cover" src="https://graph.linganmin.cn/220306/e6d48282ac21a3cc02dd7b6a2b571e81?x-oss-process=image/format,webp/quality,q_60" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-06</div><div class="title">浅读 Go 优秀开源项目源码—Gin框架</div></div></a></div><div><a href="/posts/93eb20a1/" title="「深入学习 Golang」之 Channel"><img class="cover" src="https://graph.linganmin.cn/201007/87122d3084205a5821b1e39413e84349?x-oss-process=image/format,webp/quality,q_10" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-07</div><div class="title">「深入学习 Golang」之 Channel</div></div></a></div><div><a href="/posts/3810a6eb/" title="「深入学习 Golang」之 Goroutine"><img class="cover" src="https://graph.linganmin.cn/201007/87122d3084205a5821b1e39413e84349?x-oss-process=image/format,webp/quality,q_10" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-09-15</div><div class="title">「深入学习 Golang」之 Goroutine</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://graph.linganmin.cn/200118/06177d8b92c66f2c3a6fd82cca544f51" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">安小下同学</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">37</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/linganmin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:saboranmin@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://www.weibo.com/u/1793963601" target="_blank" title="Weibo"><i class="fab fa-weibo"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">来日方短，道阻且长，好好吃饭，保重身体，圣诞节🎄快乐 ^_^</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E7%BB%84"><span class="toc-number">1.</span> <span class="toc-text">数组</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA"><span class="toc-number">1.1.</span> <span class="toc-text">创建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E5%92%8C%E8%B5%8B%E5%80%BC"><span class="toc-number">1.2.</span> <span class="toc-text">访问和赋值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%87%E7%89%87"><span class="toc-number">2.</span> <span class="toc-text">切片</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA-1"><span class="toc-number">2.1.</span> <span class="toc-text">创建</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E4%B8%8B%E6%A0%87"><span class="toc-number">2.1.1.</span> <span class="toc-text">使用下标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%AD%97%E9%9D%A2%E9%87%8F"><span class="toc-number">2.1.2.</span> <span class="toc-text">使用字面量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-number">2.1.3.</span> <span class="toc-text">使用关键字</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E5%85%83%E7%B4%A0"><span class="toc-number">2.2.</span> <span class="toc-text">访问元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%BD%E5%8A%A0%E5%92%8C%E6%89%A9%E5%AE%B9"><span class="toc-number">2.3.</span> <span class="toc-text">追加和扩容</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2022 By 安小下同学</div><div class="footer_custom_text"><a target="_blank" rel="noopener" href="http://beian.miit.gov.cn/"><img style="height:10px" src="https://img.alicdn.com/imgextra/i3/O1CN012VJ8YA22JOP4XNnCr_!!6000000007099-2-tps-20-20.png">苏ICP备16006718号</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: '4XeGSIKrWdlKmftMDDFy8fRj-gzGzoHsz',
+      appKey: 'Wjn8s1j6JAg3BbYxTNW3nMk9',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('/pluginsSrc/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

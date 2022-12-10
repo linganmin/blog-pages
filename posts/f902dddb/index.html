@@ -1,0 +1,261 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>「Kubernetes 拾遗」之 输入 kubectl run/create/apply 之后到底发生了什么 | 小下同学</title><meta name="author" content="安小下同学"><meta name="copyright" content="安小下同学"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="输入 kubectl run&#x2F;create&#x2F;apply 之后到底发生了什么？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="「Kubernetes 拾遗」之 输入 kubectl run&#x2F;create&#x2F;apply 之后到底发生了什么">
+<meta property="og:url" content="https://blog.linganmin.cn/posts/f902dddb/index.html">
+<meta property="og:site_name" content="小下同学">
+<meta property="og:description" content="输入 kubectl run&#x2F;create&#x2F;apply 之后到底发生了什么？">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://graph.linganmin.cn/200911/4043741d339ab2812a46836518975aa7?x-oss-process=image/format,webp/quality,q_10">
+<meta property="article:published_time" content="2020-09-11T14:40:34.000Z">
+<meta property="article:modified_time" content="2022-12-10T08:04:31.373Z">
+<meta property="article:author" content="安小下同学">
+<meta property="article:tag" content="Kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://graph.linganmin.cn/200911/4043741d339ab2812a46836518975aa7?x-oss-process=image/format,webp/quality,q_10"><link rel="shortcut icon" href="https://graph.linganmin.cn/201206/fe9c5e8ef76354659ab9c6c8764d6f3d"><link rel="canonical" href="https://blog.linganmin.cn/posts/f902dddb/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="KrvBZb2kkH"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?b4e74da1cb3c8b4a65da55116b8cba6f";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '「Kubernetes 拾遗」之 输入 kubectl run/create/apply 之后到底发生了什么',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-12-10 16:04:31'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://graph.linganmin.cn/200118/06177d8b92c66f2c3a6fd82cca544f51" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">37</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://graph.linganmin.cn/200911/4043741d339ab2812a46836518975aa7?x-oss-process=image/format,webp/quality,q_40')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小下同学</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">「Kubernetes 拾遗」之 输入 kubectl run/create/apply 之后到底发生了什么</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-09-11T14:40:34.000Z" title="发表于 2020-09-11 22:40:34">2020-09-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-12-10T08:04:31.373Z" title="更新于 2022-12-10 16:04:31">2022-12-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/">云原生</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="「Kubernetes 拾遗」之 输入 kubectl run/create/apply 之后到底发生了什么"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>周四的时候参加我司容器组大佬的课，问到一个问题：</p>
+<blockquote>
+<p><code>kubectl run nginx --image=nginx --replicals=3</code> 当这行命令在终端敲下回车键之后你会看到很快有三个<code>nginx pod</code>创建在集群的<code>worker</code>节点上，但当敲下回车键的时候<code>kubernetes</code>背后都做了什么呢？</p>
+</blockquote>
+<p>自认为对 k8s 还算熟悉的在下一下子懵了，好像知道但又说不清楚。那今天就系统性的查资料+实践总结一下吧。</p>
+<hr>
+<h2 id="kubectl"><a href="#kubectl" class="headerlink" title="kubectl"></a>kubectl</h2><h3 id="客户端验证"><a href="#客户端验证" class="headerlink" title="客户端验证"></a>客户端验证</h3><p>执行客户端验证，确保非法请求（创建的资源不存在、镜像格式不正确等）的快速失败，减少对<code>kuber-apiserver</code>的不必要请求提升系统性能。</p>
+<h3 id="生成运行时对象"><a href="#生成运行时对象" class="headerlink" title="生成运行时对象"></a>生成运行时对象</h3><p>使用<code>generator</code>根据需要创建<code>资源类型</code>来构建<code>运行时对象(runtime object)</code></p>
+<blockquote>
+<p>如果显示的设置了<code>--generator</code>参数，kubectl 将使用指定的生成器。如果没有指定生成器，kubectl 会根据其他参数自动选择要使用的生成器。具体优先级如下：</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">--schedule=&lt;schedule&gt;  CronJob</span><br><span class="line">--restart=Always       Deployment</span><br><span class="line">--restart=OnFailure    Job</span><br><span class="line">--restart=Never        Pod</span><br></pre></td></tr></table></figure>
+
+<p>例如：当 kubectl 判断出要创建一个 Deployment 后，它将使用<code>DeploymentV1Beta1</code>的<code>generator</code>和我们提供的参数生成一个<code>Deployment 类型的 Runtime Object</code></p>
+<h3 id="版本协商"><a href="#版本协商" class="headerlink" title="版本协商"></a>版本协商</h3><h4 id="API-版本"><a href="#API-版本" class="headerlink" title="API 版本"></a>API 版本</h4><blockquote>
+<p>为了更容易地消除字段或者重新组织资源结构，Kubernetes 支持多个 API 版本，每个版本都放在不同的 API 路径下。如：<code>/api/v1</code>、<code>/apis/extensions/v1beta1</code>，不同的 API 版本表明不同的稳定性和支持级别。具体更详细的请参考<a target="_blank" rel="noopener" href="https://k8smeetup.github.io/docs/reference/api-overview/">Kubernetes API 概述</a></p>
+</blockquote>
+<h4 id="API-组"><a href="#API-组" class="headerlink" title="API 组"></a>API 组</h4><blockquote>
+<p>API 组旨在对相似的资源进行分类，以便后期更容易扩展。API 的组别在 REST 路径或者序列化对象的<code>apiVersion</code>字段中指定。比如我们常用到的<code>Deployment</code>的<code>apiVersion</code>为<code>apiVersion: apps/v1</code>,<code>apps</code>就是 Deployment 的 API 的组名，<code>v1</code>则是 Deployment 的版本号</p>
+</blockquote>
+<p>kubectl 在生成运行时对象后，开始为它找到合适的<code>API组和API版本</code>，然后组装一个知道该资源各种 REST 语义的版本化客户端。这个阶段被称为<code>版本协商</code>，为了提升性能，kubectl 会将<code>OpenAPI scheme</code>缓存到<code>~/.kube/cache</code>目录。</p>
+<h3 id="客户端身份认证"><a href="#客户端身份认证" class="headerlink" title="客户端身份认证"></a>客户端身份认证</h3><p>为了能够成功的发送请求，kubectl 需要先进行身份认证。用户凭证一般保存在<code>kubeconfig</code>文件中，kubectl 通过以下顺序找寻配置文件：</p>
+<ul>
+<li>执行 kubectl 命令时，如果携带了<code>--kubeconfig</code>参数，则会使用该参数对应值的路径文件作为<code>kubeconfig</code></li>
+<li>如果没有携带<code>--kubeconfig</code>参数，但是系统的环境变量设置了<code>$KUBECONFIG</code>，则使用该环境变量的值的路径文件作为<code>kubeconfig</code></li>
+<li>如果没有携带<code>--kubeconfig</code>参数系统内也没有<code>$KUBECONFIG</code>环境变量，kubectl 则会使用默认的配置文件，默认配置文件路径<code>$HOME/.kube/config</code></li>
+</ul>
+<p>解析完配置文件<code>kubeconfig</code>后，kubectl 会确定当前要使用的上下文，当前配置指向的集群以及当前配置用户关联的认证信息。如果执行 kubectl 时提供了额外的参数，例如：<code>--username</code> 则会优先使用这些参数覆盖<code>kubeconfig</code>中的对应值。当获取到这些数据之后，kubectl 就会把这些信息填充到将要发送的 HTTP 请求头中：</p>
+<ul>
+<li>x509 证书使用<code>tls.RLSConfig</code>发送，其中包括 CA 证书</li>
+<li><code>bearer tokens</code> 放在 HTTP 请求头<code>Authorization</code>中</li>
+<li>用户名和密码通过 HTTP 基本认证发送</li>
+<li><code>OpenID</code> 认证是由用户事先处理的，产生一个类似<code>bearer tokens</code><br>的 token，放在请求头里发送</li>
+</ul>
+<h2 id="kube-apiserver"><a href="#kube-apiserver" class="headerlink" title="kube-apiserver"></a>kube-apiserver</h2><p>当 kubectl 发送请求成功后，这时候就该<code>kube-apiserver</code>登场了。</p>
+<p><code>kube-apiserver</code>是客户端和系统组件用来保存和检索集群状态的主要接口。</p>
+<h3 id="身份认证-Authentication"><a href="#身份认证-Authentication" class="headerlink" title="身份认证(Authentication)"></a>身份认证(Authentication)</h3><p>为了执行请求带来的相应功能，<code>kube-apiserver</code>需要验证请求者是合法的，这个过程被称为<code>认证</code>。</p>
+<p><strong>TODO</strong><br>为了验证请求，当<code>kube-apiserver</code>第一次启动时，它会查看用户提供的所有<code>cli参数</code>并组合成一个合适的令牌列表。<br><strong>TODO 这里没太懂，需要后面折腾集群的时候理解下</strong></p>
+<p>当每个请求到<code>kube-apiserver</code>时，它都会通过令牌链进行认证，直到某一个认证成功。<br><strong>注意：这里说的是某个认证成功，并不是所有，详见下面的代码</strong></p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(authHandler *unionAuthRequestHandler)</span></span> AuthenticateRequest(req *http.Request) (user.Info, <span class="type">bool</span>, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">var</span> errlist []<span class="type">error</span></span><br><span class="line">	<span class="keyword">for</span> _, currAuthRequestHandler := <span class="keyword">range</span> authHandler.Handlers &#123;</span><br><span class="line">		info, ok, err := currAuthRequestHandler.AuthenticateRequest(req)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">if</span> authHandler.FailOnError &#123;</span><br><span class="line">				<span class="keyword">return</span> info, ok, err</span><br><span class="line">			&#125;</span><br><span class="line">			errlist = <span class="built_in">append</span>(errlist, err)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> ok &#123;</span><br><span class="line">			<span class="keyword">return</span> info, ok, err</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">false</span>, utilerrors.NewAggregate(errlist)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果认证失败，则将返回相应的错误信息。如果验证成功，则将请求中的<code>Authorization</code>请求头删除，并将用户信息添加到上下文，给后续的授权和准入控制器提供访问前的建立用户身份的能力。</p>
+<h3 id="用户鉴权（Authorization）"><a href="#用户鉴权（Authorization）" class="headerlink" title="用户鉴权（Authorization）"></a>用户鉴权（Authorization）</h3><p>身份认证结束仅仅代表我们的请求是合法的，并不代表当前<code>kubeconfig</code>的所属用户具有执行当前操作的权限。</p>
+<div class="note info flat"><p><code>身份认证(identity)</code>和<code>权限校验(permission)</code>不是一回事</p>
+</div>
+
+<p><code>kube-apiserver</code>处理授权的方式和处理身份认证方式相似：基于<code>cli参数</code>输入，组合一系列授权者，这些授权者将针对每个传入的请求进行授权，如果所有授权者都拒绝了该请求，则该请求返回一个<code>Forbidden</code>响应并通知执行后续操作，如果某个授权者被批准了该请求，则请求继续。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// WithAuthorizationCheck passes all authorized requests on to handler, and returns a forbidden error otherwise.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithAuthorization</span><span class="params">(handler http.Handler, requestContextMapper request.RequestContextMapper, a authorizer.Authorizer, s runtime.NegotiatedSerializer)</span></span> http.Handler &#123;</span><br><span class="line">	<span class="keyword">if</span> a == <span class="literal">nil</span> &#123;</span><br><span class="line">		glog.Warningf(<span class="string">&quot;Authorization is disabled&quot;</span>)</span><br><span class="line">		<span class="keyword">return</span> handler</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> http.HandlerFunc(<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, req *http.Request)</span></span> &#123;</span><br><span class="line">		ctx, ok := requestContextMapper.Get(req)</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			responsewriters.InternalError(w, req, errors.New(<span class="string">&quot;no context found for request&quot;</span>))</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		attributes, err := GetAuthorizerAttributes(ctx)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			responsewriters.InternalError(w, req, err)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 鉴权</span></span><br><span class="line">		authorized, reason, err := a.Authorize(attributes)</span><br><span class="line">		<span class="keyword">if</span> authorized &#123;</span><br><span class="line">			handler.ServeHTTP(w, req)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			responsewriters.InternalError(w, req, err)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		glog.V(<span class="number">4</span>).Infof(<span class="string">&quot;Forbidden: %#v, Reason: %q&quot;</span>, req.RequestURI, reason)</span><br><span class="line">		responsewriters.Forbidden(ctx, attributes, w, req, reason, s)</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetAuthorizerAttributes</span><span class="params">(ctx request.Context)</span></span> (authorizer.Attributes, <span class="type">error</span>) &#123;</span><br><span class="line">	attribs := authorizer.AttributesRecord&#123;&#125;</span><br><span class="line"></span><br><span class="line">	user, ok := request.UserFrom(ctx)</span><br><span class="line">	<span class="keyword">if</span> ok &#123;</span><br><span class="line">		attribs.User = user</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	requestInfo, found := request.RequestInfoFrom(ctx)</span><br><span class="line">	<span class="keyword">if</span> !found &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">&quot;no RequestInfo found in the context&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Start with common attributes that apply to resource and non-resource requests</span></span><br><span class="line">	attribs.ResourceRequest = requestInfo.IsResourceRequest</span><br><span class="line">	attribs.Path = requestInfo.Path</span><br><span class="line">	attribs.Verb = requestInfo.Verb</span><br><span class="line"></span><br><span class="line">	attribs.APIGroup = requestInfo.APIGroup</span><br><span class="line">	attribs.APIVersion = requestInfo.APIVersion</span><br><span class="line">	attribs.Resource = requestInfo.Resource</span><br><span class="line">	attribs.Subresource = requestInfo.Subresource</span><br><span class="line">	attribs.Namespace = requestInfo.Namespace</span><br><span class="line">	attribs.Name = requestInfo.Name</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> &amp;attribs, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>kube-apiserver 目前支持的授权方式：</p>
+<ul>
+<li>webhook</li>
+<li>ABAC</li>
+<li>RBAC</li>
+<li>Node</li>
+</ul>
+<h3 id="准入控制-Admission-Controller"><a href="#准入控制-Admission-Controller" class="headerlink" title="准入控制(Admission Controller)"></a>准入控制(Admission Controller)</h3><p>当完成了<code>身份认证</code>和<code>授权</code>之后，便进入了<code>Admission Controller</code>。</p>
+<blockquote>
+<p>身份认证是建立用户身份，授权是校验用户是否有权限，而<code>Admission Controller</code>则是 Kubernetes 其他组件对该请求的校验，<code>Admission Controller</code>会校验当前请求是否满足个组件的<code>准入控制规则</code>，官方默认有十几个规则，且该规则是可以自定义的。这也是当前请求所携带的资源对象保存到<code>ETCD</code>之前的最后一个堡垒。</p>
+</blockquote>
+<p><code>Admission Controller</code>的规则是封装的一些列额外的检查，以确保当前请求所执行的操作不会对集群产生意外和负面结果。</p>
+<p>和身份认证、授权不同的是，身份认证和授权只关心请求的用户和操作，准入控制还处理请求的内容，且该操作只对创建、更新、删除或连接等有效，对读操作无效。</p>
+<p>和身份认证、授权另一个不同的是，身份认证和授权只要满足一种方式即可通过，而<code>Admission Controller</code>的判断是<code>且/&amp;&amp;</code>逻辑，即如果某个准入控制器校验不通过，则整个<code>Admission Controller</code>校验中断，请求失败。</p>
+<div class="note info flat"><p><code>Admission Controller</code>的设计重点在于提高可扩展性，可以根据不同需求自定义准入规则。</p>
+</div>
+<p>Kubernetes 自带的准入控制器见代码：<a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/tree/master/plugin/pkg/admission">源码</a></p>
+<h2 id="etcd"><a href="#etcd" class="headerlink" title="etcd"></a>etcd</h2><blockquote>
+<p>TODO kube-apiserver 启动&amp;工作流程</p>
+</blockquote>
+<p>到此刻，Kubernetes 就完成了对请求的所有审查，并允许进入下一步。在下一步中， kuber-apiserver 会反序列化 HTTP 请求，构造<code>运行时对象(runtime object)</code>(类似 kubectl generator 的逆过程)，并将其通过<code>storage provider</code>持久化到<code>etcd</code>中，默认情况下存储的键的格式为<code>&lt;namespace&gt;/&lt;name&gt;</code>例如：<code>default/nginx</code>，也可以自定义。</p>
+<p>在资源创建过程中如果出现任何错误都会被捕获，最后<code>service provider</code>会执行<code>get</code>操作来确认该资源是否被创建成功。</p>
+<p>然后构造 HTTP 响应并返回给客户端。</p>
+<div class="note info flat"><p>注：在 Kubernetes v1.14 之前，这往后还有 Initializer 的步骤，该步骤在 v1.14 被 <a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/issues/67113">webhook admission 取代</a>。</p>
+</div>
+
+<h2 id="控制循环（Control-loops）"><a href="#控制循环（Control-loops）" class="headerlink" title="控制循环（Control loops）"></a>控制循环（Control loops）</h2><p>截止到目前，我们的 Deployment 已经存储在 etcd 中，且所有初始化逻辑已经完成。在接下来的阶段将涉及 Deployment 所依赖的资源拓扑结构。</p>
+<p>在 Kubernetes 中，Deployment 是 ReplicaSet 的集合，而 ReplicaSet 是 Pod 的集合。那么 Kubernetes 是如何从一个 HTTP 请求中按照层级结构依次穿件这些资源呢？其实这些工作都是由 Kubernetes 内置的 <code>Controller</code> 完成的。</p>
+<p>在 Kubernetes 整个系统中使用了大量的 Controller ，Controller 是一个用于将系统状态从<code>当前状态</code>修正到<code>期望状态</code>的异步脚本。所有 Controller 都通过<code>kube-controller-manager</code>组件并行运行，每种 Controller 都负责一种具体的控制流程。</p>
+<div class="note success flat"><p>(notes: 不要忘记 Kubernetes 是<code>声明式</code>)</p>
+<p>所谓<code>声明式</code>,指的就是我只需要提交一个定义好的 API 对象来<code>声明</code>我所期望的状态是什么样子。</p>
+<p>Kubernetes 基于对 API 对象的增、删、改、查，在完全无需外界干预的情况下，完成对<code>实际状态</code>和<code>期望状态</code>的调谐（Reconcile）过程便是控制循环做的事。</p>
+<p>声明式 API，是 Kubernetes 项目编排能力的核心。</p>
+</div>
+
+<h3 id="Deployments-Controller"><a href="#Deployments-Controller" class="headerlink" title="Deployments Controller"></a>Deployments Controller</h3><p>在上一步，假如将反序列化后的 HTTP 请求存储到 etcd 的是 Deployment 资源，此时 kube-apiserver 可以使其可见，<code>Deployment Controller</code>会检测到它。</p>
+<blockquote>
+<p>Deployment Controller 的哦工作就是负责监听 Deployment 记录的变化</p>
+</blockquote>
+<h3 id="ReplicaSets-Controller"><a href="#ReplicaSets-Controller" class="headerlink" title="ReplicaSets Controller"></a>ReplicaSets Controller</h3><h3 id="informers"><a href="#informers" class="headerlink" title="informers"></a>informers</h3><h3 id="scheduler"><a href="#scheduler" class="headerlink" title="scheduler"></a>scheduler</h3><h2 id="kubelet"><a href="#kubelet" class="headerlink" title="kubelet"></a>kubelet</h2><h3 id="pod-同步"><a href="#pod-同步" class="headerlink" title="pod 同步"></a>pod 同步</h3><h3 id="CRI-和-pause-容器"><a href="#CRI-和-pause-容器" class="headerlink" title="CRI 和 pause 容器"></a>CRI 和 pause 容器</h3><h3 id="CNI-和-pod-网络"><a href="#CNI-和-pod-网络" class="headerlink" title="CNI 和 pod 网络"></a>CNI 和 pod 网络</h3><h3 id="跨主机容器网络"><a href="#跨主机容器网络" class="headerlink" title="跨主机容器网络"></a>跨主机容器网络</h3><h3 id="容器启动"><a href="#容器启动" class="headerlink" title="容器启动"></a>容器启动</h3><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><hr>
+<p>太困了，睡觉去了。。。</p>
+<blockquote>
+<p>TODO</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://blog.linganmin.cn">安小下同学</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://blog.linganmin.cn/posts/f902dddb/">https://blog.linganmin.cn/posts/f902dddb/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://blog.linganmin.cn" target="_blank">小下同学</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Kubernetes/">Kubernetes</a></div><div class="post_share"><div class="social-share" data-image="https://graph.linganmin.cn/200911/4043741d339ab2812a46836518975aa7?x-oss-process=image/format,webp/quality,q_10" data-sites="twitter,wechat,weibo"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="https://graph.linganmin.cn/200119/eed3e3ad8e1b81503989ef17fc2c5e7d?x-oss-process=image/format,webp/quality,q_60" target="_blank"><img class="post-qr-code-img" src="https://graph.linganmin.cn/200119/eed3e3ad8e1b81503989ef17fc2c5e7d?x-oss-process=image/format,webp/quality,q_60" alt="请我吃苹果"/></a><div class="post-qr-code-desc">请我吃苹果</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/3810a6eb/"><img class="prev-cover" src="https://graph.linganmin.cn/201007/87122d3084205a5821b1e39413e84349?x-oss-process=image/format,webp/quality,q_10" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">「深入学习 Golang」之 Goroutine</div></div></a></div><div class="next-post pull-right"><a href="/posts/8983aea6/"><img class="next-cover" src="https://graph.linganmin.cn/200823/cedb311450bb165121fd1f1a6d49fa13?x-oss-process=image/format,webp/quality,q_10" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">「Kubernetes 拾遗」之 Probe（探针）</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/6c891c2/" title="Kubernetes 暴力入门(一)"><img class="cover" src="https://graph.linganmin.cn/200118/3c4cf20b664e660235099a4262185023?x-oss-process=image/format,webp/quality,q_10" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-01-18</div><div class="title">Kubernetes 暴力入门(一)</div></div></a></div><div><a href="/posts/a145cb7/" title="使用 Kubeadm 部署 Kubernetes 集群"><img class="cover" src="https://graph.linganmin.cn/200911/4043741d339ab2812a46836518975aa7?x-oss-process=image/format,webp/quality,q_10" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-03-27</div><div class="title">使用 Kubeadm 部署 Kubernetes 集群</div></div></a></div><div><a href="/posts/e589412a/" title="Kubeadm 安装 Kubernetes V1.22.2 踩坑手记"><img class="cover" src="https://graph.linganmin.cn/210919/4e6c850efdc628e06f037a82d5d7b185?x-oss-process=image/format,webp/quality,q_10" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-20</div><div class="title">Kubeadm 安装 Kubernetes V1.22.2 踩坑手记</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://graph.linganmin.cn/200118/06177d8b92c66f2c3a6fd82cca544f51" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">安小下同学</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">37</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/linganmin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:saboranmin@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://www.weibo.com/u/1793963601" target="_blank" title="Weibo"><i class="fab fa-weibo"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">来日方短，道阻且长，好好吃饭，保重身体，圣诞节🎄快乐 ^_^</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#kubectl"><span class="toc-number">1.</span> <span class="toc-text">kubectl</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%AA%8C%E8%AF%81"><span class="toc-number">1.1.</span> <span class="toc-text">客户端验证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E8%BF%90%E8%A1%8C%E6%97%B6%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.2.</span> <span class="toc-text">生成运行时对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%88%E6%9C%AC%E5%8D%8F%E5%95%86"><span class="toc-number">1.3.</span> <span class="toc-text">版本协商</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#API-%E7%89%88%E6%9C%AC"><span class="toc-number">1.3.1.</span> <span class="toc-text">API 版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#API-%E7%BB%84"><span class="toc-number">1.3.2.</span> <span class="toc-text">API 组</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-number">1.4.</span> <span class="toc-text">客户端身份认证</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kube-apiserver"><span class="toc-number">2.</span> <span class="toc-text">kube-apiserver</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81-Authentication"><span class="toc-number">2.1.</span> <span class="toc-text">身份认证(Authentication)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E9%89%B4%E6%9D%83%EF%BC%88Authorization%EF%BC%89"><span class="toc-number">2.2.</span> <span class="toc-text">用户鉴权（Authorization）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%86%E5%85%A5%E6%8E%A7%E5%88%B6-Admission-Controller"><span class="toc-number">2.3.</span> <span class="toc-text">准入控制(Admission Controller)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#etcd"><span class="toc-number">3.</span> <span class="toc-text">etcd</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E5%BE%AA%E7%8E%AF%EF%BC%88Control-loops%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">控制循环（Control loops）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Deployments-Controller"><span class="toc-number">4.1.</span> <span class="toc-text">Deployments Controller</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ReplicaSets-Controller"><span class="toc-number">4.2.</span> <span class="toc-text">ReplicaSets Controller</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#informers"><span class="toc-number">4.3.</span> <span class="toc-text">informers</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#scheduler"><span class="toc-number">4.4.</span> <span class="toc-text">scheduler</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kubelet"><span class="toc-number">5.</span> <span class="toc-text">kubelet</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pod-%E5%90%8C%E6%AD%A5"><span class="toc-number">5.1.</span> <span class="toc-text">pod 同步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CRI-%E5%92%8C-pause-%E5%AE%B9%E5%99%A8"><span class="toc-number">5.2.</span> <span class="toc-text">CRI 和 pause 容器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CNI-%E5%92%8C-pod-%E7%BD%91%E7%BB%9C"><span class="toc-number">5.3.</span> <span class="toc-text">CNI 和 pod 网络</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B7%A8%E4%B8%BB%E6%9C%BA%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C"><span class="toc-number">5.4.</span> <span class="toc-text">跨主机容器网络</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%B9%E5%99%A8%E5%90%AF%E5%8A%A8"><span class="toc-number">5.5.</span> <span class="toc-text">容器启动</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2022 By 安小下同学</div><div class="footer_custom_text"><a target="_blank" rel="noopener" href="http://beian.miit.gov.cn/"><img style="height:10px" src="https://img.alicdn.com/imgextra/i3/O1CN012VJ8YA22JOP4XNnCr_!!6000000007099-2-tps-20-20.png">苏ICP备16006718号</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: '4XeGSIKrWdlKmftMDDFy8fRj-gzGzoHsz',
+      appKey: 'Wjn8s1j6JAg3BbYxTNW3nMk9',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('/pluginsSrc/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
