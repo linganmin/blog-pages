@@ -1,0 +1,315 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>「深入学习 Golang」之 Goroutine | 小下同学</title><meta name="author" content="安小下同学"><meta name="copyright" content="安小下同学"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="一些 golang 的重点和难点">
+<meta property="og:type" content="article">
+<meta property="og:title" content="「深入学习 Golang」之 Goroutine">
+<meta property="og:url" content="https://blog.linganmin.cn/posts/3810a6eb/index.html">
+<meta property="og:site_name" content="小下同学">
+<meta property="og:description" content="一些 golang 的重点和难点">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://graph.linganmin.cn/201007/87122d3084205a5821b1e39413e84349?x-oss-process=image/format,webp/quality,q_10">
+<meta property="article:published_time" content="2020-09-14T22:40:34.000Z">
+<meta property="article:modified_time" content="2022-12-10T08:04:42.069Z">
+<meta property="article:author" content="安小下同学">
+<meta property="article:tag" content="Golang">
+<meta property="article:tag" content="Goroutine">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://graph.linganmin.cn/201007/87122d3084205a5821b1e39413e84349?x-oss-process=image/format,webp/quality,q_10"><link rel="shortcut icon" href="https://graph.linganmin.cn/201206/fe9c5e8ef76354659ab9c6c8764d6f3d"><link rel="canonical" href="https://blog.linganmin.cn/posts/3810a6eb/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="KrvBZb2kkH"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?b4e74da1cb3c8b4a65da55116b8cba6f";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '「深入学习 Golang」之 Goroutine',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-12-10 16:04:42'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://graph.linganmin.cn/200118/06177d8b92c66f2c3a6fd82cca544f51" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">37</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://graph.linganmin.cn/201007/87122d3084205a5821b1e39413e84349?x-oss-process=image/format,webp/quality,q_40')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">小下同学</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">「深入学习 Golang」之 Goroutine</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-09-14T22:40:34.000Z" title="发表于 2020-09-15 06:40:34">2020-09-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-12-10T08:04:42.069Z" title="更新于 2022-12-10 16:04:42">2022-12-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%A5%BD%E5%A5%BD%E5%AD%A6%E4%B9%A0/">好好学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="「深入学习 Golang」之 Goroutine"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="进程、线程、协程"><a href="#进程、线程、协程" class="headerlink" title="进程、线程、协程"></a>进程、线程、协程</h2><h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><ol>
+<li>进程是系统资源分配的最小单位</li>
+<li>进程包括<code>text region</code>，<code>data region</code>和<code>stack region</code>等</li>
+<li>进程的创建和销毁都是系统资源级别的，因此是一种比较昂贵的操作</li>
+<li>进程是抢占式调度，他有三个状态：等待态、就绪态、运行态</li>
+<li>进程之间是相互隔离的，每个进程有各自的系统资源，更加安全同时也带来了进程间通信不便的问题</li>
+<li>进程是线程的载体</li>
+</ol>
+<h3 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h3><ol>
+<li>同一个进程的多个线程共享进程的资源</li>
+<li>每个线程也拥有自己的一少部分独立的资源</li>
+<li>线程相比进程更加轻量，同一个进程内的多个线程通信比多个进程间通信容易，同时也带来了同步、互斥和线程安全的问题</li>
+</ol>
+<h3 id="协程"><a href="#协程" class="headerlink" title="协程"></a>协程</h3><ol>
+<li>协程调度不需要内核参与，是完全由用户态程序决定的</li>
+<li>协程不是抢占式调度，多个协程进行协作调度，避免了系统切换开销导致 CPU 使用率高</li>
+</ol>
+<h2 id="goroutine"><a href="#goroutine" class="headerlink" title="goroutine"></a>goroutine</h2><p>协程并不是 Go 语言的特有机制，Go 语言是在原生语言层面支持的的协程。<u>Go 语言可以通过通信实现 goroutine 之间的数据共享。</u></p>
+<blockquote>
+<p>Golang 中，不要通过共享内存来通信，而应该通过通信来共享内存！</p>
+</blockquote>
+<ol>
+<li>创建一个 goroutine 不需要太多的内存，大概 2KB 左右栈空间</li>
+<li>goroutine 的创建、调度和销毁是<code>runtime</code>完成的，<code>runtime</code>会被分配一些线程，用来运行所有的 goroutine 在任何时候每个线程都只会运行一个 goroutine，如果一个 goroutine 被阻塞会进入休眠状态，待操作完成后再恢复，另外一个 goroutine 会替换它到对应的线程上运行</li>
+<li>goroutine 的调度是<code>协作式</code>的。当切换 goroutine 时，调度器只需要保存和恢复三个寄存器：程序指针、栈指针和DX，切换开销很小</li>
+<li>goroutine 的退出机制是，goroutine 的退出只能由本身控制，不允许外部强制结束该 goroutine。两种例外：1.main函数结束，2.程序崩溃结束运行。要实现主 goroutine 控制子 goroutine 的开始和结束，需要借助其他方式，比如context、channel、全局变量</li>
+</ol>
+<h3 id="goroutine-中的三个实体"><a href="#goroutine-中的三个实体" class="headerlink" title="goroutine 中的三个实体"></a>goroutine 中的三个实体</h3><ul>
+<li>G<ul>
+<li>代表一个 goroutine 对象，每次使用<code>go</code>调用的时候都会创建一个 G 对象，它包括<code>栈</code>,<code>指令指针</code>和调用 goroutine 重要的其他信息，比如阻塞它的 channel</li>
+</ul>
+</li>
+<li>M<ul>
+<li>代表一个线程，每次创建一个M的时候，都会用一个底层的线程被创建。所有的G任务最终还是在M上执行</li>
+<li>M会从绑定的运行队列（P）中取出G，然后运行G，如果G运行完毕或进入休眠状态，则从运行队列中取出下一个G，周而复始</li>
+</ul>
+</li>
+<li>P<ul>
+<li>代表一个处理器，每一个运行的M都必须绑定一个P，就像线程必须在每一个cpu核上执行一样。P会调度G到M上运行。P的个数就是<code>GOMAXPROCS</code>（最大256），M的个数和P不一定一样多，每个P有自己单独的本地G任务队列，也会有一个全局的G任务队列</li>
+<li>P可以理解为控制Go代码并行度的机制</li>
+</ul>
+</li>
+</ul>
+<p>相比较大多数并行设计模式，Golang 比较有优势的设计就是P上下文这个概念的出现，<u>如果只有G和M的对应关系，那么当G阻塞在I&#x2F;O上的时候，M是没有实际工作的，这样造成了资源的浪费，没有了P那么所有的G的列表都放在了全局，会导致临界区太大，对多核调度造成极大影响</u></p>
+<h3 id="调度器模型-GPM"><a href="#调度器模型-GPM" class="headerlink" title="调度器模型 GPM"></a>调度器模型 GPM</h3><p>相关 GPM 的内容参考：<a href="https://blog.linganmin.cn/posts/golang-gpm.html">https://blog.linganmin.cn/posts/golang-gpm.html</a></p>
+<h2 id="并发控制"><a href="#并发控制" class="headerlink" title="并发控制"></a>并发控制</h2><h3 id="并行和并发"><a href="#并行和并发" class="headerlink" title="并行和并发"></a>并行和并发</h3><ul>
+<li>并发<ul>
+<li>指在同一时刻只能有一条指令执行，但多个进程指令被快速轮换执行，使得在宏观上具有多个任务同时执行的效果，但在微观上并不是同时执行的，只是把时间分成了若干段，使得多个进程快速交替执行。</li>
+</ul>
+</li>
+<li>并行<ul>
+<li>指在同一时刻有多条指令在多个处理器上同时运行。</li>
+</ul>
+</li>
+</ul>
+<p>并发编程在 CPU 密集型的程序中无法提升程序性能，更适用在在 I&#x2F;O 密集型的程序中。</p>
+<h3 id="并发实现模型"><a href="#并发实现模型" class="headerlink" title="并发实现模型"></a>并发实现模型</h3><ul>
+<li>多进程<ul>
+<li>优点<ul>
+<li>每个进程独立，都有自己单独的内存空间和上下文信息。</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>开销大</li>
+<li>进程间通信难</li>
+<li>进程间内存共享不方便</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>多线程<ul>
+<li>优点<ul>
+<li>开销小</li>
+<li>轻量，创建和销毁成本低</li>
+<li>线程之间通信和共享内存方便</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>频繁创建和销毁会导致开销大，可使用线程池</li>
+<li>数据紊乱、死锁</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>协程<ul>
+<li>优点<ul>
+<li>不基于操作系统，基于程序，开销小</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Golang-中的-CSP-并发模型"><a href="#Golang-中的-CSP-并发模型" class="headerlink" title="Golang 中的 CSP 并发模型"></a>Golang 中的 CSP 并发模型</h3><p>我们常见的多线程模型一般是通过共享内存实现的，但共享内存就会出现如：资源抢占、一致性的问题。为了解决这些问题，需要引入多线程锁、原子操作等限制来保证程序执行结果的正确性。</p>
+<p>除了共享内存模型外，还有一个经典的模型就是 CSP 模型。CSP 全拼是 Communicating Sequential Processes，大致意思是 通信顺序进程。CSP 描述了并发系统中的交互模式，是一种面向并发的的语言的源头。</p>
+<p>Golang 只使用了CSP中的<code>Process/Channel</code>的部分，简单的说就是<code>Process</code> 映射&#x3D;&gt; <code>Goroutine</code>，<code>Channel</code> 映射&#x3D;&gt; <code>Channel</code>。Goroutine 之间是没有任何耦合，可以完全并发执行，Channel 用于给 Goroutine 传递消息，保持数据同步。</p>
+<h3 id="控制并发的方法"><a href="#控制并发的方法" class="headerlink" title="控制并发的方法"></a>控制并发的方法</h3><h4 id="并发数据安全"><a href="#并发数据安全" class="headerlink" title="并发数据安全"></a>并发数据安全</h4><ul>
+<li>锁<ul>
+<li>sync.Mutex<ul>
+<li>互斥锁</li>
+</ul>
+</li>
+<li>sync.RWMutex<ul>
+<li>读写锁</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>原子操作<ul>
+<li>sync</li>
+<li>atomic</li>
+</ul>
+</li>
+</ul>
+<h4 id="并发行为控制"><a href="#并发行为控制" class="headerlink" title="并发行为控制"></a>并发行为控制</h4><p>开发 go 程序时，经常要使用 goroutine 并发处理任务，有时候这些 goroutine 是相互独立的，有时候多个 goroutine 之间往往是需要同步数据通信的，还有一种情况是，主 goroutine 需要控制所属于它的所有子 goroutine 。</p>
+<p>实现 goroutine 间通信的方式大致如下</p>
+<ul>
+<li>全局变量<ul>
+<li>实现<ul>
+<li>声明一个全局变量</li>
+<li>所有子 goroutine 共享该全局变量，并不断轮训检测变量是否有更新</li>
+<li>主 goroutine 更新该变量</li>
+<li>子 goroutine 检测到全局变量更新，执行相应逻辑</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Channel 通信<ul>
+<li>场景<ul>
+<li>某个任务中的某一个或多个 goroutine 依赖另一个 goroutine 中的条件或产生的结果</li>
+</ul>
+</li>
+<li>实现<ul>
+<li>channel + select<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">  finish := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">bool</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="literal">true</span> &#123;</span><br><span class="line">      fmt.Println(<span class="string">&quot;hello 小下&quot;</span>)</span><br><span class="line">      <span class="comment">// 监听通知</span></span><br><span class="line">      <span class="keyword">select</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> &lt;-finish:</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        time.Sleep(time.Millisecond * <span class="number">500</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  &#125;()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 使用 sleep 模拟耗时</span></span><br><span class="line">    time.Sleep(time.Second * <span class="number">2</span>)</span><br><span class="line">    <span class="comment">// 通知完成</span></span><br><span class="line">    finish &lt;- <span class="literal">true</span></span><br><span class="line">  &#125;()</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 防止 main 过早退出</span></span><br><span class="line">  time.Sleep(time.Second * <span class="number">5</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Context<ul>
+<li>场景<ul>
+<li>多层级的 goroutine 之间的信号传递</li>
+</ul>
+</li>
+<li>实现<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">&quot;context&quot;</span></span><br><span class="line">  <span class="string">&quot;fmt&quot;</span></span><br><span class="line">  <span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">foo</span><span class="params">(ctx context.Context)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">go</span> bar(ctx)</span><br><span class="line">  <span class="keyword">for</span> <span class="literal">true</span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;hello 小下&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">select</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">      fmt.Println(<span class="string">&quot;foo exit.....&quot;</span>)</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      time.Sleep(time.Millisecond * <span class="number">400</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">bar</span><span class="params">(ctx context.Context)</span></span> &#123;</span><br><span class="line">  <span class="keyword">for</span> <span class="literal">true</span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">&quot;hello world&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">select</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">      fmt.Println(<span class="string">&quot;bar exit.....&quot;</span>)</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      time.Sleep(time.Millisecond * <span class="number">600</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">  ctx, cancel := context.WithCancel(context.Background())</span><br><span class="line"></span><br><span class="line">  <span class="keyword">go</span> foo(ctx)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 防止过早发送退出信号</span></span><br><span class="line">  time.Sleep(time.Second * <span class="number">2</span>)</span><br><span class="line">  cancel()</span><br><span class="line">  <span class="comment">// 防止过早退出</span></span><br><span class="line">  time.Sleep(time.Second * <span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://blog.linganmin.cn">安小下同学</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://blog.linganmin.cn/posts/3810a6eb/">https://blog.linganmin.cn/posts/3810a6eb/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://blog.linganmin.cn" target="_blank">小下同学</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Golang/">Golang</a><a class="post-meta__tags" href="/tags/Goroutine/">Goroutine</a></div><div class="post_share"><div class="social-share" data-image="https://graph.linganmin.cn/201007/87122d3084205a5821b1e39413e84349?x-oss-process=image/format,webp/quality,q_10" data-sites="twitter,wechat,weibo"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="https://graph.linganmin.cn/200119/eed3e3ad8e1b81503989ef17fc2c5e7d?x-oss-process=image/format,webp/quality,q_60" target="_blank"><img class="post-qr-code-img" src="https://graph.linganmin.cn/200119/eed3e3ad8e1b81503989ef17fc2c5e7d?x-oss-process=image/format,webp/quality,q_60" alt="请我吃苹果"/></a><div class="post-qr-code-desc">请我吃苹果</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/311f4be0/"><img class="prev-cover" src="https://graph.linganmin.cn/201004/3190e5ac9987d0ad0c09eeae9ffe680b?x-oss-process=image/format,webp/quality,q_3" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">2020.10.01 去「大陈岛」看海了</div></div></a></div><div class="next-post pull-right"><a href="/posts/f902dddb/"><img class="next-cover" src="https://graph.linganmin.cn/200911/4043741d339ab2812a46836518975aa7?x-oss-process=image/format,webp/quality,q_10" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">「Kubernetes 拾遗」之 输入 kubectl run/create/apply 之后到底发生了什么</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/d6715893/" title="浅读 Go 优秀开源项目源码—Gin框架"><img class="cover" src="https://graph.linganmin.cn/220306/e6d48282ac21a3cc02dd7b6a2b571e81?x-oss-process=image/format,webp/quality,q_60" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-06</div><div class="title">浅读 Go 优秀开源项目源码—Gin框架</div></div></a></div><div><a href="/posts/93eb20a1/" title="「深入学习 Golang」之 Channel"><img class="cover" src="https://graph.linganmin.cn/201007/87122d3084205a5821b1e39413e84349?x-oss-process=image/format,webp/quality,q_10" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-07</div><div class="title">「深入学习 Golang」之 Channel</div></div></a></div><div><a href="/posts/943537f7/" title="「深入学习 Golang」之 GPM"><img class="cover" src="https://graph.linganmin.cn/201007/87122d3084205a5821b1e39413e84349?x-oss-process=image/format,webp/quality,q_10" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-03</div><div class="title">「深入学习 Golang」之 GPM</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://graph.linganmin.cn/200118/06177d8b92c66f2c3a6fd82cca544f51" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">安小下同学</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">37</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/linganmin" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:saboranmin@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://www.weibo.com/u/1793963601" target="_blank" title="Weibo"><i class="fab fa-weibo"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">来日方短，道阻且长，好好吃饭，保重身体，圣诞节🎄快乐 ^_^</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E3%80%81%E5%8D%8F%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">进程、线程、协程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.1.</span> <span class="toc-text">进程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B"><span class="toc-number">1.2.</span> <span class="toc-text">线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%8F%E7%A8%8B"><span class="toc-number">1.3.</span> <span class="toc-text">协程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#goroutine"><span class="toc-number">2.</span> <span class="toc-text">goroutine</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#goroutine-%E4%B8%AD%E7%9A%84%E4%B8%89%E4%B8%AA%E5%AE%9E%E4%BD%93"><span class="toc-number">2.1.</span> <span class="toc-text">goroutine 中的三个实体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E5%BA%A6%E5%99%A8%E6%A8%A1%E5%9E%8B-GPM"><span class="toc-number">2.2.</span> <span class="toc-text">调度器模型 GPM</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6"><span class="toc-number">3.</span> <span class="toc-text">并发控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E8%A1%8C%E5%92%8C%E5%B9%B6%E5%8F%91"><span class="toc-number">3.1.</span> <span class="toc-text">并行和并发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E5%AE%9E%E7%8E%B0%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.2.</span> <span class="toc-text">并发实现模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Golang-%E4%B8%AD%E7%9A%84-CSP-%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.3.</span> <span class="toc-text">Golang 中的 CSP 并发模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E5%B9%B6%E5%8F%91%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">3.4.</span> <span class="toc-text">控制并发的方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8"><span class="toc-number">3.4.1.</span> <span class="toc-text">并发数据安全</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E8%A1%8C%E4%B8%BA%E6%8E%A7%E5%88%B6"><span class="toc-number">3.4.2.</span> <span class="toc-text">并发行为控制</span></a></li></ol></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2022 By 安小下同学</div><div class="footer_custom_text"><a target="_blank" rel="noopener" href="http://beian.miit.gov.cn/"><img style="height:10px" src="https://img.alicdn.com/imgextra/i3/O1CN012VJ8YA22JOP4XNnCr_!!6000000007099-2-tps-20-20.png">苏ICP备16006718号</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: '4XeGSIKrWdlKmftMDDFy8fRj-gzGzoHsz',
+      appKey: 'Wjn8s1j6JAg3BbYxTNW3nMk9',
+      avatar: 'monsterid',
+      serverURLs: '',
+      emojiMaps: "",
+      path: window.location.pathname,
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('/pluginsSrc/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
